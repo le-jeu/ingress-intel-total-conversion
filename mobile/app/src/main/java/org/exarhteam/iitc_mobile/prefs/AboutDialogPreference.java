@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import org.apache.commons.text.StringSubstitutor;
 
+import org.exarhteam.iitc_mobile.BuildConfig;
 import org.exarhteam.iitc_mobile.R;
 
 import java.util.HashMap;
@@ -35,15 +36,15 @@ public class AboutDialogPreference extends Preference {
         Map<String, String> valuesMap = new HashMap<>();
         valuesMap.put("build_version", mBuildVersion);
         valuesMap.put("iitc_version", mIitcVersion);
-        valuesMap.put("cradle_link", getContext().getText(R.string.cradle_link).toString());
-        valuesMap.put("fkloft_link", getContext().getText(R.string.fkloft_link).toString());
-        valuesMap.put("giuseppe_lucido_link", getContext().getText(R.string.giuseppe_lucido_link).toString());
-        valuesMap.put("tg_iitc_news_link", getContext().getText(R.string.tg_iitc_news_link).toString());
-        valuesMap.put("tg_iitc_group_link", getContext().getText(R.string.tg_iitc_group_link).toString());
-        valuesMap.put("reddit_iitc_link", getContext().getText(R.string.reddit_iitc_link).toString());
-        valuesMap.put("bugtracker_link", getContext().getText(R.string.bugtracker_link).toString());
-        valuesMap.put("website_url", getContext().getText(R.string.website_url).toString());
-        valuesMap.put("github_iitc_url", getContext().getText(R.string.github_iitc_url).toString());
+        valuesMap.put("cradle_link", String.format(getContext().getText(R.string.link_template).toString(), BuildConfig.IITC_CRADLE_URL, "cradle"));
+        valuesMap.put("fkloft_link", String.format(getContext().getText(R.string.link_template).toString(), BuildConfig.IITC_FKLOFT_URL, "fkloft"));
+        valuesMap.put("giuseppe_lucido_link", String.format(getContext().getText(R.string.link_template).toString(), BuildConfig.IITC_GIUSEPPE_LUCIDO_URL, "Giuseppe Lucido"));
+        valuesMap.put("tg_iitc_news_link", String.format(getContext().getText(R.string.link_template).toString(), BuildConfig.IITC_TG_NEWS_URL, "IITC News"));
+        valuesMap.put("tg_iitc_group_link", String.format(getContext().getText(R.string.link_template).toString(), BuildConfig.IITC_TG_GROUP_URL, "IITC Group"));
+        valuesMap.put("reddit_iitc_link", String.format(getContext().getText(R.string.link_template).toString(), BuildConfig.IITC_REDDIT_URL, "r/IITC/"));
+        valuesMap.put("bugtracker_link", String.format(getContext().getText(R.string.link_template).toString(), BuildConfig.IITC_BUGTRACKER_URL, getContext().getText(R.string.bugtracker)));
+        valuesMap.put("website_link", String.format(getContext().getText(R.string.link_template).toString(), BuildConfig.IITC_WEBSITE_URL, getContext().getText(R.string.iitc_website)));
+        valuesMap.put("github_iitc_link", String.format(getContext().getText(R.string.link_template).toString(), BuildConfig.IITC_GITHUB_URL, getContext().getText(R.string.iitc_ce_format)));
         valuesMap.put("ISC_license_text", getContext().getText(R.string.ISC_license_text).toString());
 
         String templateString = getContext().getText(R.string.pref_about_text).toString();
