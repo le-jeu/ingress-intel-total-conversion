@@ -16,6 +16,28 @@ def getVersionCode = { ->
     return Integer.parseInt(desc)
 }
 
+def getProp(String propName, String propDefault) {
+    def value = System.getenv(propName)
+    if (value)
+        return value
+
+    def localPropsFile = rootProject.file('local.properties')
+
+    def props = new Properties()
+
+    if (localPropsFile.exists()) {
+        props.load(new FileInputStream(localPropsFile))
+        if (props[propName])
+            return props[propName]
+    }
+
+    return propDefault
+}
+
+def setProp(String propName, String propDefault) {
+    android.defaultConfig.buildConfigField "String", propName, getProp(propName, propDefault)
+}
+
 android {
     compileSdkVersion 28
     buildToolsVersion = '28.0.3'
@@ -28,15 +50,15 @@ android {
         versionName "0.30.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField "String", "IITC_CRADLE_URL", "\"https://github.com/leCradle/\""
-        buildConfigField "String", "IITC_FKLOFT_URL", "\"https://github.com/fkloft/\""
-        buildConfigField "String", "IITC_GIUSEPPE_LUCIDO_URL", "\"http://be.net/giuseppelucido\""
-        buildConfigField "String", "IITC_TG_NEWS_URL", "\"https://t.me/iitc_news\""
-        buildConfigField "String", "IITC_TG_GROUP_URL", "\"https://t.me/iitc_group\""
-        buildConfigField "String", "IITC_REDDIT_URL", "\"https://www.reddit.com/r/IITC/\""
-        buildConfigField "String", "IITC_BUGTRACKER_URL", "\"https://github.com/IITC-CE/ingress-intel-total-conversion/issues/new\""
-        buildConfigField "String", "IITC_WEBSITE_URL", "\"https://iitc.app/\""
-        buildConfigField "String", "IITC_GITHUB_URL", "\"https://github.com/IITC-CE/ingress-intel-total-conversion\""
+        setProp("IITC_CRADLE_URL", "\"https://github.com/leCradle/\"")
+        setProp("IITC_FKLOFT_URL", "\"https://github.com/fkloft/\"")
+        setProp("IITC_GIUSEPPE_LUCIDO_URL", "\"http://be.net/giuseppelucido\"")
+        setProp("IITC_TG_NEWS_URL", "\"https://t.me/iitc_news\"")
+        setProp("IITC_TG_GROUP_URL", "\"https://t.me/iitc_group\"")
+        setProp("IITC_REDDIT_URL", "\"https://www.reddit.com/r/IITC/\"")
+        setProp("IITC_BUGTRACKER_URL", "\"https://github.com/IITC-CE/ingress-intel-total-conversion/issues/new\"")
+        setProp("IITC_WEBSITE_URL", "\"https://iitc.app/\"")
+        setProp("IITC_GITHUB_URL", "\"https://github.com/IITC-CE/ingress-intel-total-conversion\"")
     }
     signingConfigs {
         debug {
