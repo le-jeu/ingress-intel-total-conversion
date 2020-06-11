@@ -17,16 +17,20 @@ mapTileMapbox.styles = {
   'mapbox://styles/mapbox/bright-v8' : 'Bright'
 };
 
+mapTileMapbox.layers = [];
+
 function setup () {
   setupMapboxLeaflet();
 
 
     for(var style in mapTileMapbox.styles) {
       let name = mapTileMapbox.styles[style];
-      layerChooser.addBaseLayer(L.mapboxGL({
-          accessToken: mapTileMapbox.token,
-          style: style
-        }), 'Mapbox ' + name);
+      let layer = L.mapboxGL({
+        accessToken: mapTileMapbox.token,
+        style: style
+      });
+      mapTileMapbox.layers.push(layer);
+      layerChooser.addBaseLayer(layer, 'Mapbox ' + name);
     }
 };
 
@@ -41,4 +45,3 @@ function setupMapboxLeaflet () {
     throw e;
   }
 }
-
