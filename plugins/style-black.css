@@ -261,7 +261,9 @@ table.artifact tr > * {
     border: 1px solid var(--border-color-20a8b1);
 }
 
+/** plugins style **/
 
+/* bookmarks */
 
 .bookmarksDialog .bookmarkFolder {
     border: 1px solid var(--border-color-20a8b1);
@@ -349,12 +351,16 @@ table.artifact tr > * {
     color: var(--color-20a8b1);
 }
 
+/* MPE */
+
 .mpe select,
 .mpe a {
     border: 1px solid var(--border-color-ffce00);
     background: var(--background-color-rgba9);
     color: var(--border-color-ffce00);
 }
+
+/* privacy */
 
 #privacycontrols {
     background-color: var(--background-color-rgba6);
@@ -363,4 +369,35 @@ table.artifact tr > * {
 #privacycontrols a {
     width: inherit;
     border-color: var(--border-color-20a8b1);
+}
+
+/* wasabee */
+
+.wasabee-table thead tr {
+    background-color: var(--table-background-header);
+}
+.wasabee-table tbody tr {
+    background-color: var(--table-background-even);
+}
+.wasabee-table tbody tr:nth-child(2n+1) {
+    background-color: var(--table-background-odd);
+}
+
+.wasabee-agent-menu, .wasabee-state-menu {
+    display: grid;
+}
+
+.wasabee-agent-menu label, .wasabee-state-menu label {
+    grid-column: 1;
+    text-decoration: underline dotted;
+    align-self: center;
+}
+
+.wasabee-state-menu select, .wasabee-agent-menu select {
+    grid-column: 2;
+    justify-self: end;
+}
+
+#dialog-wasabee-assign .desc, #dialog-wasabee-state .desc {
+    line-height: 1.5em;
 }
