@@ -1,7 +1,7 @@
 // @author         jaiperdu
 // @name           COMM Filter
-// @category       COMM
-// @version        0.1.0
+// @category       Misc
+// @version        0.1.1
 // @description    COMM Filter
 
 /*
@@ -90,6 +90,29 @@ let renderVirus = function (virus) {
   return '<span style=\"color: #f88; background-color: #500;\">[virus]<\/span> destroyed ' + virus.virusCount + ' resonators on ' + renderPortal(virus.portal);
 }
 
+let renderMsg = function(msg, nick, time, team, msgToPlayer, systemNarrowcast) {
+  var ta = unixTimeToHHmmss(time);
+  var tb = unixTimeToDateTimeString(time, true);
+  //add <small> tags around the milliseconds
+  tb = (tb.slice(0,19)+'<small class="milliseconds">'+tb.slice(19)+'</small>').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+  // help cursor via “#chat time”
+  var t = '<time title="'+tb+'" data-timestamp="'+time+'">'+ta+'</time>';
+  if ( msgToPlayer )
+  {
+    t = '<div class="pl_nudge_date">' + t + '</div><div class="pl_nudge_pointy_spacer"></div>';
+  }
+  if (systemNarrowcast)
+  {
+    msg = '<div class="system_narrowcast">' + msg + '</div>';
+  }
+  var color = COLORS[team];
+  if (nick === window.PLAYER.nickname) color = '#fd6';    //highlight things said/done by the player in a unique colour (similar to @player mentions from others in the chat text itself)
+  var s = 'style="cursor:pointer; color:'+color+'"';
+  var i = ['<span class="invisep">&lt;</span>', '<span class="invisep">&gt;</span>'];
+  return '<tr><td>'+t+'</td><td>'+i[0]+'<mark class="nickname" ' + s + '>'+ nick+'</mark>'+i[1]+'</td><td>'+msg+'</td></tr>';
+}
+
 let findVirus = function (logs) {
   let virus = new Map();
   let hide = new Set();
@@ -109,7 +132,7 @@ let findVirus = function (logs) {
       log.virus = last_data.hash;
       last_data.virus = true;
       last_data.virusCount = amount;
-      last_data.virusMsg = window.chat.renderMsg(
+      last_data.virusMsg = renderMsg(
         renderVirus(last_data),
         last_data.player.name,
         last_data.time,
@@ -134,7 +157,7 @@ let computeMUs = function (logs) {
         agent: tot,
         all: sum
       }
-      log.MUMsg = window.chat.renderMsg(
+      log.MUMsg = renderMsg(
         'created a field from '+ renderPortal(log.portal) + ' +' + log.mus + 'MUs'
         + ' (' + tot.toLocaleString('en-US') + '/' + sum.toLocaleString('en-US') + ')',
         log.player.name,
@@ -147,7 +170,7 @@ let computeMUs = function (logs) {
   }
 }
 
-window.chat.writeDataToHash = function(newData, storageHash, isPublicChannel, isOlderMsgs) {
+let writeDataToHash = function(newData, storageHash, isPublicChannel, isOlderMsgs) {
   $.each(newData.result, function(ind, json) {
     // avoid duplicates
     if(json[0] in storageHash.data) return true;
@@ -386,7 +409,7 @@ window.chat.writeDataToHash = function(newData, storageHash, isPublicChannel, is
     storageHash.data[json[0]] = [
       json[1],
       data.type == 'chat',
-      chat.renderMsg(prefix + msg, data.player.name, data.time, data.player.team === 'RESISTANCE' ? TEAM_RES : TEAM_ENL, data.type == 'chat' && data.alert, systemNarrowcast),
+      renderMsg(prefix + msg, data.player.name, data.time, data.player.team === 'RESISTANCE' ? TEAM_RES : TEAM_ENL, data.type == 'chat' && data.alert, systemNarrowcast),
       data.player.name,
       data
     ];
@@ -410,30 +433,8 @@ window.unixTimeToHHmmss = function(time) {
   return  h + ':' + m + ':' + s;
 }
 
-window.chat.renderMsg = function(msg, nick, time, team, msgToPlayer, systemNarrowcast) {
-  var ta = unixTimeToHHmmss(time);
-  var tb = unixTimeToDateTimeString(time, true);
-  //add <small> tags around the milliseconds
-  tb = (tb.slice(0,19)+'<small class="milliseconds">'+tb.slice(19)+'</small>').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
-  // help cursor via “#chat time”
-  var t = '<time title="'+tb+'" data-timestamp="'+time+'">'+ta+'</time>';
-  if ( msgToPlayer )
-  {
-    t = '<div class="pl_nudge_date">' + t + '</div><div class="pl_nudge_pointy_spacer"></div>';
-  }
-  if (systemNarrowcast)
-  {
-    msg = '<div class="system_narrowcast">' + msg + '</div>';
-  }
-  var color = COLORS[team];
-  if (nick === window.PLAYER.nickname) color = '#fd6';    //highlight things said/done by the player in a unique colour (similar to @player mentions from others in the chat text itself)
-  var s = 'style="cursor:pointer; color:'+color+'"';
-  var i = ['<span class="invisep">&lt;</span>', '<span class="invisep">&gt;</span>'];
-  return '<tr><td>'+t+'</td><td>'+i[0]+'<mark class="nickname" ' + s + '>'+ nick+'</mark>'+i[1]+'</td><td>'+msg+'</td></tr>';
-}
-
-window.chat.renderData = function(data, element, likelyWereOldMsgs) {
+let renderData = function(data, element, likelyWereOldMsgs) {
   var elm = $('#'+element);
   if(elm.is(':hidden')) return;
 
@@ -448,7 +449,7 @@ window.chat.renderData = function(data, element, likelyWereOldMsgs) {
   $.each(vals, function(ind, msg) {
     var nextTime = new Date(msg[0]).toLocaleDateString();
     if(prevTime && prevTime !== nextTime)
-      msgs += chat.renderDivider(nextTime);
+      msgs += window.chat.renderDivider(nextTime);
     if (msg[4].virus) {
       if (msg[4].virusMsg)
         msgs += msg[4].virusMsg
@@ -462,10 +463,14 @@ window.chat.renderData = function(data, element, likelyWereOldMsgs) {
 
   var scrollBefore = scrollBottom(elm);
   elm.html('<table>' + msgs + '</table>');
-  chat.keepScrollPosition(elm, scrollBefore, likelyWereOldMsgs);
+  window.chat.keepScrollPosition(elm, scrollBefore, likelyWereOldMsgs);
 }
 
 
 window.plugin.commFilter = function () {};
 
-var setup = function() {};
+var setup = function() {
+  window.chat.writeDataToHash = writeDataToHash;
+  window.chat.renderData = renderData;
+  window.chat.renderMsg = renderMsg;
+};
