@@ -54,11 +54,6 @@
     --table-background-even: rgba(20, 20, 20, .85);/*rgba(25, 63, 95, 0.75);*/
 }
 
-html,
-body {
-    background-color: var(--background-color-0e3d4e);
-}
-
 body {
     font-size: 12px;
 }
@@ -68,8 +63,12 @@ body,
     font-family: monospace, "Roboto", "Helvetica Neue", Helvetica, sans-serif;
 }
 
+#map {
+    background-color: var(--background-color-0e3d4e);
+}
+
 #sidebar {
-    background-color: var(--background-color-rgba6);
+    background-color: var(--background-color-rgba6) !important;
     border-left: 1px solid var(--border-color-20a8b1);
     color: var(--color-888);
 }
@@ -102,7 +101,7 @@ a {
 
 #chatcontrols {
     color: var(--color-ffce00);
-    background: var(--background-color-rgba6);
+    background: var(--background-color-rgba6) !important;
 }
 
 
@@ -128,12 +127,12 @@ a {
 }
 
 #chatinput {
-    background: var(--background-color-rgba6);
+    background: var(--background-color-rgba6) !important;
     border: 1px solid var(--border-color-20a8b1);
 }
 
 #chat {
-    background: var(--background-color-rgba6);
+    background: var(--background-color-rgba6) !important;
     border: 1px solid var(--border-color-20a8b1);
 }
 
