@@ -340,7 +340,7 @@ em {
   white-space: nowrap;
 }
 
-#chat td .system_narrowcast {
+#chat td.system_narrowcast {
   color: #f66 !important;
 }
 
