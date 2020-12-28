@@ -1,0 +1,17 @@
+.authtest-profile-list li {
+    display: grid;
+    border: 1px solid rgba(0,0,0,.5);
+    background-color: rgba(0,0,0,.5);
+    padding: 3px;
+    grid-gap: .5em;
+    grid-template-columns: 40px auto
+}
+
+.authtest-profile-list .profile-picture {
+	width: 40px;
+	cursor: pointer;
+}
+
+.authtest-profile-list .profile-expires {
+	font-style: italic;
+}
