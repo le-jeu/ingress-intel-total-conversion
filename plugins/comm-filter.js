@@ -8,10 +8,10 @@
 Re-write from https://github.com/udnp/iitc-plugins/
 */
 
-//todo list
-//2) add fracker as a filter
-//3) add virus  filter
-//4) add checkable filtering for all/faction/alert
+// todo list
+// 2) add fracker as a filter
+// 3) add virus  filter
+// 4) add checkable filtering for all/faction/alert
 
 const commFilter = function () {};
 
@@ -35,9 +35,9 @@ commFilter.rules = [
   { type: 'first capture', plain: '[secure] | |PLAYER| captured their first Portal.' },
   { type: 'first field', plain: '[secure] | |PLAYER| created their first Control Field' },
   { type: 'first link', plain: '[secure] | |PLAYER| created their first Link.' },
-  //{ type: 'chat', plain: 'SENDER| blah |AT_PLAYER| blah |AT_PLAYER| blah ' },
-  //{ type: 'faction chat', plain: '[secure] |SENDER| blah |AT_PLAYER| blah |AT_PLAYER| blah ' },
-]
+  // { type: 'chat', plain: 'SENDER| blah |AT_PLAYER| blah |AT_PLAYER| blah ' },
+  // { type: 'faction chat', plain: '[secure] |SENDER| blah |AT_PLAYER| blah |AT_PLAYER| blah ' },
+];
 
 const markupType = new Set(['TEXT', 'PLAYER', 'PORTAL', 'FACTION', 'NUMBER', 'AT_PLAYER', 'SENDER']);
 
@@ -51,11 +51,10 @@ const buildRules = function () {
       const item = items[i];
       if (markupType.has(item)) {
         markup.push(item);
-        if (item == 'PORTAL') r.portals++;
-        if (item == 'PLAYER') r.player = true;
-        if (item == 'FACTION') r.faction = true;
-      }
-      else {
+        if (item === 'PORTAL') r.portals++;
+        if (item === 'PLAYER') r.player = true;
+        if (item === 'FACTION') r.faction = true;
+      } else {
         markup.push('TEXT');
         text.set(i, item);
       }
@@ -63,16 +62,16 @@ const buildRules = function () {
     r.markup = markup;
     r.text = text;
   }
-}
+};
 
 const matchChat = function (data) {
-  if (data.markup.some((ent) => ent[0] == 'SENDER')) {
-    if (data.markup[0][0] == 'SECURE')
+  if (data.markup.some((ent) => ent[0] === 'SENDER')) {
+    if (data.markup[0][0] === 'SECURE')
       return 'chat faction';
-    return 'chat'
+    return 'chat';
   }
   return 'unknown';
-}
+};
 
 const matchRule = function (data) {
   for (const r of commFilter.rules) {
@@ -85,12 +84,10 @@ const matchRule = function (data) {
           match = false;
           break;
         }
-      }
-      else if (r.markup[i] !== data.markup[i][0]) {
+      } else if (r.markup[i] !== data.markup[i][0]) {
         match = false;
         break;
-      }
-      else if (r.markup[i] === 'TEXT' && r.text.has(i) && r.text.get(i) !== data.markup[i][1].plain) {
+      } else if (r.markup[i] === 'TEXT' && r.text.has(i) && r.text.get(i) !== data.markup[i][1].plain) {
         match = false;
         break;
       }
@@ -99,15 +96,13 @@ const matchRule = function (data) {
   }
 
   return matchChat(data);
-}
+};
 
 commFilter.viruses = new Map();
 
 const findVirus = function (guids, data) {
   commFilter.viruses.clear();
-  let hide = new Set();
   let last_data = {};
-  let amount = 0;
   for (const guid of guids) {
     const parseData = data[guid][4];
     const log = parseData['comm-filter'];
@@ -119,10 +114,7 @@ const findVirus = function (guids, data) {
       || log.portal.lngE6 !== last_data['comm-filter'].portal.lngE6) {
       last_data = parseData;
       log.virus = false;
-      amount = 1;
-    }
-    else {
-      amount += 1;
+    } else {
       log.virus = last_data.guid;
       last_data['comm-filter'].virus = true;
     }
@@ -139,7 +131,7 @@ const findVirus = function (guids, data) {
     parseData.markup[1][1].plain = 'destroyed ' + (guids.length+1) + ' Resonators on ';
     data[guid][2] = window.chat.renderMsgRow(parseData);
   }
-}
+};
 
 const computeMUs = function (guids, data) {
   let agents = new Map();
@@ -155,38 +147,29 @@ const computeMUs = function (guids, data) {
       log.totalMUs = {
         agent: tot,
         all: sum
-      }
-      if (parseData.markup.length == 6)
+      };
+      if (parseData.markup.length === 6)
         parseData.markup.push('');
       parseData.markup[6] = [
         'TEXT',
         { plain: ' (' + tot.toLocaleString('en-US') + '/' + sum.toLocaleString('en-US') + ')' }
-        ];
+      ];
       data[guid][2] = window.chat.renderMsgRow(parseData);
     }
   }
-}
+};
 
 const reParseData = function (data) {
   let parse = {};
   let markup = data.markup;
-  let withSender = markup.some(ent => ent[0] == 'SENDER');
-  let portals = markup.filter(ent => ent[0] == 'PORTAL').map(ent => ent[1]);
-  let numbers = markup.filter(ent => ent[0] == 'TEXT' && !isNaN(ent[1].plain)).map(ent => parseInt(ent[1].plain));
-  let atPlayers = markup.filter(ent => ent[0] == 'AT_PLAYER').map(ent =>
+  let portals = markup.filter(ent => ent[0] === 'PORTAL').map(ent => ent[1]);
+  let numbers = markup.filter(ent => ent[0] === 'TEXT' && !isNaN(ent[1].plain)).map(ent => parseInt(ent[1].plain));
+  let atPlayers = markup.filter(ent => ent[0] === 'AT_PLAYER').map(ent =>
     ({
       name: ent[1].plain.slice(1),
       team: ent[1].team === 'RESISTANCE' ? TEAM_RES : TEAM_ENL
     })
   );
-
-  let plainSub = markup.map(ent =>
-    (ent[0] == 'TEXT' && !withSender)
-    ? isNaN(ent[1].plain)
-      ? ent[1].plain
-      : 'NUMBER'
-    : ent[0]
-  ).join('|');
 
   parse.type = matchRule(data);
 
@@ -230,7 +213,7 @@ const updateCSS = function () {
   if (!elm) {
     elm = document.createElement('style');
     document.body.appendChild(elm);
-    elm.id = 'comm-filter-css'
+    elm.id = 'comm-filter-css';
   }
 
   elm.textContent = '';
@@ -253,12 +236,12 @@ const updateCSS = function () {
   }
 
   elm.textContent = content;
-}
+};
 
-const reparsePublicData = function (data) {
+const reparsePublicData = function () {
   const public = window.chat._public;
   $.each(public.data, function(ind, msg) {
-    if (msg[4]['comm-filter'] == undefined)
+    if (msg[4]['comm-filter'] === undefined)
       reParseData(msg[4]);
   });
 
@@ -266,7 +249,7 @@ const reparsePublicData = function (data) {
   findVirus(public.guids, public.data);
 
   updateCSS();
-}
+};
 
 window.plugin.commFilter = commFilter;
 
