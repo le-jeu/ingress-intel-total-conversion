@@ -251,9 +251,21 @@ const reparsePublicData = function () {
   updateCSS();
 };
 
+const renderTimeCell = function(time, classNames) {
+  var ta = new Date(time).toLocaleTimeString();
+  var tb = unixTimeToDateTimeString(time, true);
+  // add <small> tags around the milliseconds
+  tb = (tb.slice(0,19)+'<small class="milliseconds">'+tb.slice(19)+'</small>').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return '<td><time class="' + classNames + '" title="'+tb+'" data-timestamp="'+time+'">'+ta+'</time></td>';
+};
+
 window.plugin.commFilter = commFilter;
 
 var setup = function() {
-  buildRules();
-  window.addHook('publicChatDataAvailable', reparsePublicData);
+  if (window.chat.renderTimeCell !== undefined) {
+    window.chat.renderTimeCell = renderTimeCell;
+
+    buildRules();
+    window.addHook('publicChatDataAvailable', reparsePublicData);
+  } else console.log('comm-filter:', 'need chat refactor branch');
 };
