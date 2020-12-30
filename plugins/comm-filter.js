@@ -15,6 +15,92 @@ Re-write from https://github.com/udnp/iitc-plugins/
 
 const commFilter = function () {};
 
+commFilter.rules = [
+  { type: 'capture', plain: 'PLAYER| captured |PORTAL' },
+  { type: 'field', plain: 'PLAYER| created a Control Field @|PORTAL| +|NUMBER| MUs' },
+  { type: 'beacon', plain: 'PLAYER| deployed a Beacon on |PORTAL' },
+  { type: 'battle', plain: 'PLAYER| deployed a Battle Beacon on |PORTAL' },
+  { type: 'fracker', plain: 'PLAYER| deployed a Fracker on |PORTAL' },
+  { type: 'resonator', plain: 'PLAYER| deployed a Resonator on |PORTAL' },
+  { type: 'destroy field', plain: 'PLAYER| destroyed a Control Field @|PORTAL| -|NUMBER| MUs' },
+  { type: 'destroy resonator', plain: 'PLAYER| destroyed a Resonator on |PORTAL' },
+  { type: 'destroy link', plain: 'PLAYER| destroyed the Link |PORTAL| to |PORTAL' },
+  { type: 'link', plain: 'PLAYER| linked |PORTAL| to |PORTAL' },
+  { type: 'recurse', plain: 'PLAYER| Recursed' },
+  { type: 'battle result', plain: 'FACTION| won a Battle Beacon on |PORTAL' },
+  { type: 'destroy link', plain: 'Your Link |PORTAL| to |PORTAL| destroyed by |PLAYER' },
+  { type: 'attack', plain: 'Your Portal |PORTAL| is under attack by |PLAYER' },
+  { type: 'neutralize', plain: 'Your Portal |PORTAL| neutralized by |PLAYER' },
+  { type: 'kinetic', plain: 'Your Kinetic Capsule is now ready.' },
+  { type: 'first capture', plain: '[secure] | |PLAYER| captured their first Portal.' },
+  { type: 'first field', plain: '[secure] | |PLAYER| created their first Control Field' },
+  { type: 'first link', plain: '[secure] | |PLAYER| created their first Link.' },
+  //{ type: 'chat', plain: 'SENDER| blah |AT_PLAYER| blah |AT_PLAYER| blah ' },
+  //{ type: 'faction chat', plain: '[secure] |SENDER| blah |AT_PLAYER| blah |AT_PLAYER| blah ' },
+]
+
+const markupType = new Set(['TEXT', 'PLAYER', 'PORTAL', 'FACTION', 'NUMBER', 'AT_PLAYER', 'SENDER']);
+
+const buildRules = function () {
+  for (const r of commFilter.rules) {
+    const items = r.plain.split('|');
+    const markup = [];
+    const text = new Map();
+    r.portals = 0;
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (markupType.has(item)) {
+        markup.push(item);
+        if (item == 'PORTAL') r.portals++;
+        if (item == 'PLAYER') r.player = true;
+        if (item == 'FACTION') r.faction = true;
+      }
+      else {
+        markup.push('TEXT');
+        text.set(i, item);
+      }
+    }
+    r.markup = markup;
+    r.text = text;
+  }
+}
+
+const matchChat = function (data) {
+  if (data.markup.some((ent) => ent[0] == 'SENDER')) {
+    if (data.markup[0][0] == 'SECURE')
+      return 'chat faction';
+    return 'chat'
+  }
+  return 'unknown';
+}
+
+const matchRule = function (data) {
+  for (const r of commFilter.rules) {
+    if (r.markup.length !== data.markup.length)
+      continue;
+    let match = true;
+    for (let i = 0; i < r.markup.length; i++) {
+      if (r.markup[i] === 'NUMBER') {
+        if (data.markup[i][0] !== 'TEXT' || isNaN(data.markup[i][1].plain)) {
+          match = false;
+          break;
+        }
+      }
+      else if (r.markup[i] !== data.markup[i][0]) {
+        match = false;
+        break;
+      }
+      else if (r.markup[i] === 'TEXT' && r.text.has(i) && r.text.get(i) !== data.markup[i][1].plain) {
+        match = false;
+        break;
+      }
+    }
+    if (match) return r.type;
+  }
+
+  return matchChat(data);
+}
+
 commFilter.viruses = new Map();
 
 const findVirus = function (guids, data) {
@@ -102,127 +188,38 @@ const reParseData = function (data) {
     : ent[0]
   ).join('|');
 
-  if (markup[0][0] == 'PLAYER') {
-    // <PLAYER| captured |PORTAL (ADDRESS)>
-    // <PLAYER| created a Control Field @|PORTAL (ADDRESS)| +|NUMBER| MUs>
-    // <PLAYER| deployed a Beacon on |PORTAL (ADDRESS)>
-    // <PLAYER| deployed a Battle Beacon on |PORTAL (ADDRESS)>
-    // <PLAYER| deployed a Fracker on |PORTAL (ADDRESS)>
-    // <PLAYER| deployed a Resonator on |PORTAL (ADDRESS)>
-    // <PLAYER| destroyed a Control Field @|PORTAL (ADDRESS)| -|NUMBER| MUs>
-    // <PLAYER| destroyed a Resonator on |PORTAL (ADDRESS)>
-    // <PLAYER| destroyed the Link |PORTAL (ADDRESS)| to |PORTAL (ADDRESS)>
-    // <PLAYER| linked |PORTAL (ADDRESS)| to |PORTAL (ADDRESS)>
-    // <PLAYER| Recursed.>
+  parse.type = matchRule(data);
 
-    parse.type = "unknown player action";
-    if (markup[1][1].plain.search('captured') != -1) {
-      parse.type = 'capture';
-      parse.portal = portals[0];
-    }
-    else if (markup[1][1].plain.search('created') != -1) {
-      parse.type = 'field';
-      parse.portal = portals[0];
-      if (numbers.length > 0)
-        parse.mus = numbers[0];
-    }
-    else if (markup[1][1].plain.search('deployed a Beacon') != -1) {
-      parse.type = 'beacon';
-      parse.portal = portals[0];
-    }
-    else if (markup[1][1].plain.search('deployed a Battle Beacon') != -1) {
-      parse.type = 'battle';
-      parse.portal = portals[0];
-    }
-    else if (markup[1][1].plain.search('deployed a Fracker') != -1) {
-      parse.type = 'fracker';
-      parse.portal = portals[0];
-    }
-    else if (markup[1][1].plain.search('deployed a Resonator') != -1) {
-      parse.type = 'deploy';
-      parse.portal = portals[0];
-    }
-    else if (markup[1][1].plain.search('destroyed a Control Field') != -1) {
-      parse.type = 'destroy field';
-      parse.portal = portals[0];
-      if (numbers.length > 0)
-        parse.mus = numbers[0];
-    }
-    else if (markup[1][1].plain.search('destroyed a Resonator') != -1) {
-      parse.type = 'destroy resonator';
-      parse.portal = portals[0];
-    }
-    else if (markup[1][1].plain.search('destroyed the Link') != -1) {
-      parse.type = 'destroy link';
-      parse.from = portals[0];
-      parse.to = portals[1];
-    }
-    else if (markup[1][1].plain.search('linked') != -1) {
-      parse.type = 'link';
-      parse.from = portals[0];
-      parse.to = portals[1];
-    } else if (markup[1][1].plain.search('Recursed') != -1) {
-      parse.type = 'recurse';
-    } else {
-      parse.portals = portals;
-    }
+  switch (parse.type) {
+  case 'field':
+  case 'destroy field':
+    parse.mus = numbers[0];
+  case 'capture':
+  case 'beacon':
+  case 'battle':
+  case 'fracker':
+  case 'resonator':
+  case 'destroy resonator':
+  case 'battle result':
+  case 'neutralize':
+  case 'attack':
+    parse.portal = portals[0];
+    break;
+  case 'link':
+  case 'destroy link':
+    parse.from = portals[0];
+    parse.to = portals[1];
+    break;
+  default:
+    if (portals.length > 0) parse.portals = portals;
   }
 
-  if (markup[0][0] == 'FACTION') {
-    // <FACTION| won a Battle Beacon on |PORTAL (ADDRESS)>
+  if (parse.type === 'battle result')
     parse.faction = markup[0][1].team;
-    parse.type = "unknown faction action";
-    if (markup[1][1].plain.search('won a Battle Beacon on') != -1) {
-      parse.type = 'battle won';
-      parse.portal = portals[0];
-    }
-  }
 
-  if (data.narrowcast) {
-    // <Your Link |PORTAL (ADDRESS)| to |PORTAL (ADDRESS)| destroyed by |PLAYER>
-    // <Your Portal |PORTAL (ADDRESS)| is under attack by |PLAYER>
-    // <Your Portal |PORTAL (ADDRESS)| neutralized by |PLAYER>
-    // <Your Kinetic Capsule is now ready.>
-    let players = markup.filter(ent => ent[0] == 'PLAYER').map(ent => ent[1]);
-    if (markup[0][1].plain.search("Link") != -1) {
-      parse.type = 'destroy link';
-      parse.from = portals[0];
-      parse.to = portals[1];
-    }
-    else if (markup[0][1].plain.search("Kinetic") != -1) {
-      parse.type = 'kinetic';
-    }
-    else if (markup.length >= 2 && markup[2][1].plain.search("neutralized") != -1) {
-      parse.type = 'destroy portal';
-      parse.portal = portals[0];
-    }
-    else {
-      parse.type = 'attack portal';
-      parse.portal = portals[0];
-    }
-  }
-  // drop secure entity
-  if (data.secure)
-    markup = markup.slice(1);
-
-  if (markup[0][0] == 'SENDER') {
-    // <SENDER| blah |@PLAYER| blah |@PLAYER| blah >
-    // <[secure] |SENDER| blah |@PLAYER| blah |@PLAYER| blah >
-    parse.type = "chat";
+  if (parse.type === 'chat' || parse.type === 'chat faction') {
     parse.mentions = atPlayers;
-    parse.message = markup.slice(1).map(ent => ent[1].plain).join('').trim();
-  }
-  else if (!parse.type) {
-    // <[secure] | |PLAYER| captured their first Portal.>
-    // <[secure] | |PLAYER| created their first Control Field>
-    // <[secure] | |PLAYER| created their first Link.>
-    let players = markup.filter(ent => ent[0] == 'PLAYER').map(ent => ent[1]);
-    if (plainSub.search('first Portal') != -1)
-      parse.type = 'first capture';
-    else if (plainSub.search('first Control') != -1)
-      parse.type = 'first field';
-    else if (plainSub.search('first Link') != -1)
-      parse.type = 'first link';
+    parse.message = markup.slice(1 + data.secure).map(ent => ent[1].plain).join('').trim();
   }
 
   data['comm-filter'] = parse;
@@ -274,5 +271,6 @@ const reparsePublicData = function (data) {
 window.plugin.commFilter = commFilter;
 
 var setup = function() {
+  buildRules();
   window.addHook('publicChatDataAvailable', reparsePublicData);
 };
