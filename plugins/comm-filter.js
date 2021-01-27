@@ -1,7 +1,7 @@
 // @author         jaiperdu
 // @name           COMM Filter
 // @category       Misc
-// @version        0.1.1
+// @version        0.1.2
 // @description    COMM Filter
 
 /*
@@ -122,13 +122,16 @@ const findVirus = function (guids, data) {
   for (const guid of guids) {
     const log = data[guid][4]['comm-filter'];
     if (log.virus === true)
-      commFilter.viruses.set(guid, []);
+      commFilter.viruses.set(guid, {
+        guids: [],
+        type: (log.portal.team === 'RESISTANCE') ? 'jarvis' : 'ada'
+      });
     else if (log.virus)
-      commFilter.viruses.get(log.virus).push(guid);
+      commFilter.viruses.get(log.virus).guids.push(guid);
   }
-  for (const [guid, guids] of commFilter.viruses) {
+  for (const [guid, prop] of commFilter.viruses) {
     const parseData = data[guid][4];
-    parseData.markup[1][1].plain = 'destroyed ' + (guids.length+1) + ' Resonators on ';
+    parseData.markup[1][1].plain = 'destroyed ' + (prop.guids.length+1) + ' Resonators on ';
     data[guid][2] = window.chat.renderMsgRow(parseData);
   }
 };
@@ -218,17 +221,25 @@ const updateCSS = function () {
 
   elm.textContent = '';
 
-  const viruses = [];
+  const ada = [];
+  const jarvis = [];
   let hidden = [];
-  for (const [guid, guids] of commFilter.viruses) {
-    viruses.push(guid);
-    hidden = hidden.concat(guids);
+  for (const [guid, prop] of commFilter.viruses) {
+    if (prop.type === 'jarvis')
+      jarvis.push(guid);
+    else
+      ada.push(guid);
+    hidden = hidden.concat(prop.guids);
   }
 
   let content = '';
-  if (viruses.length > 0) {
-    content += viruses.map((guid) => '#chat tr[data-guid="' + guid + '"] td:nth-child(3):before').join(',\n')
-      + '{ content: "[virus]"; color: #f88; background-color: #500; }\n';
+  if (ada.length > 0) {
+    content += ada.map((guid) => '#chat tr[data-guid="' + guid + '"] td:nth-child(3):before').join(',\n')
+      + '{ content: "[JARVIS]"; color: #f88; background-color: #500; margin-right: .5rem; }\n';
+  }
+  if (jarvis.length > 0) {
+    content += jarvis.map((guid) => '#chat tr[data-guid="' + guid + '"] td:nth-child(3):before').join(',\n')
+      + '{ content: "[ADA]"; color: #f88; background-color: #500; margin-right: .5rem; }\n';
   }
   if (hidden.length > 0) {
     content += hidden.map((guid) => '#chat tr[data-guid="' + guid + '"]').join(',\n')
