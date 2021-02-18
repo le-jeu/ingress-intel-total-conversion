@@ -232,7 +232,7 @@ const updateCSS = function () {
     hidden = hidden.concat(prop.guids);
   }
 
-  let content = '';
+  let content = '#chat td:first-child { width: max-content }\n';
   if (ada.length > 0) {
     content += ada.map((guid) => '#chat tr[data-guid="' + guid + '"] td:nth-child(3):before').join(',\n')
       + '{ content: "[JARVIS]"; color: #f88; background-color: #500; margin-right: .5rem; }\n';
