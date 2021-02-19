@@ -5,12 +5,12 @@ window.chat.commTabs = [
 // channel: the COMM channel ('tab' parameter in server requests)
 // name: visible name
 // inputPrompt: string for the input prompt
-// inputColor: (optional) color for input
+// inputClass: (optional) class to apply to #chatinput
 // sendMessage: (optional) function to send the message (to override the default of sendPlext)
 // globalBounds: (optional) if true, always use global latLng bounds
-  {channel:'all', name:'All', inputPrompt: 'broadcast:', inputColor:'#f66'},
-  {channel:'faction', name:'Faction', inputPrompt: 'tell faction:'},
-  {channel:'alerts', name:'Alerts', inputPrompt: 'tell Jarvis:', inputColor: '#666', globalBounds: true, sendMessage: function() {
+  {channel:'all', name:'All', inputPrompt: 'broadcast:', inputClass:'public'},
+  {channel:'faction', name:'Faction', inputPrompt: 'tell faction:', inputClass:'faction'},
+  {channel:'alerts', name:'Alerts', inputPrompt: 'tell Jarvis:', inputClass: 'alerts', globalBounds: true, sendMessage: function() {
     alert("Jarvis: A strange game. The only winning move is not to play. How about a nice game of chess?\n(You can't chat to the 'alerts' channel!)");
   }},
 ];
@@ -82,7 +82,7 @@ window.chat.genPostData = function(channel, storageHash, getOlderMsgs) {
     // need to reset these flags now because clearing will only occur
     // after the request is finished – i.e. there would be one almost
     // useless request.
-    window.chat.initChannels();
+    window.chat.initChannelsData();
 
     chat._oldBBox = b;
   }
@@ -453,10 +453,13 @@ window.chat.getActive = function() {
   return $('#chatcontrols .active').data('channel');
 }
 
-window.chat.tabToChannel = function(tab) {
-  if (tab == 'faction') return 'faction';
-  if (tab == 'alerts') return 'alerts';
-  return 'all';
+window.chat.getCommTab = function (tab) {
+  var channelObject;
+  chat.commTabs.forEach(function (entry) {
+    if (entry.channel === tab)
+      channelObject = entry;
+  });
+  return channelObject;
 };
 
 
@@ -502,16 +505,12 @@ window.chat.backgroundChannelData = function(instance,channel,flag) {
 
 
 window.chat.request = function() {
-  var channel = chat.tabToChannel(chat.getActive());
-  if (channel == 'faction' || (window.chat.backgroundChannels && window.chat.backgroundChannels['faction'])) {
-    chat.requestFaction(false);
-  }
-  if (channel == 'all' || (window.chat.backgroundChannels && window.chat.backgroundChannels['all'])) {
-    chat.requestPublic(false);
-  }
-  if (channel == 'alerts' || (window.chat.backgroundChannels && window.chat.backgroundChannels['alerts'])) {
-    chat.requestAlerts(false);
-  }
+  var channel = chat.getActive();
+  chat.commTabs.forEach(function (entry) {
+    if (channel === entry.channel || (window.chat.backgroundChannels && window.chat.backgroundChannels[entry.channel])) {
+      chat.requestChannel(entry.channel, false);
+    }
+  });
 }
 
 
@@ -528,16 +527,14 @@ window.chat.needMoreMessages = function() {
   var nearTop = activeChat.scrollTop() <= CHAT_REQUEST_SCROLL_TOP;
   if(hasScrollbar && !nearTop) return;
 
-  if(activeTab === 'faction')
-    chat.requestFaction(true);
-  else
-    chat.requestPublic(true);
+  chat.requestChannel(activeTab, true);
 };
 
 
 window.chat.chooseTab = function(tab) {
-  if (tab != 'all' && tab != 'faction' && tab != 'alerts') {
-    log.warn('chat tab "'+tab+'" requested - but only "all", "faction" and "alerts" are valid - assuming "all" wanted');
+  if (chat.commTabs.every(function (entry) { return entry.channel !== tab; })) {
+    var tabsAvalaible = chat.commTabs.map(function (entry) { return '"' + entry.channel + '"'; }).join(', ');
+    log.warn('chat tab "'+tab+'" requested - but only ' + tabsAvalaible + ' are valid - assuming "all" wanted');
     tab = 'all';
   }
 
@@ -545,8 +542,15 @@ window.chat.chooseTab = function(tab) {
 
   localStorage['iitc-chat-tab'] = tab;
 
+  var oldCommTab = chat.getCommTab(oldTab);
+  var commTab = chat.getCommTab(tab);
+
+  var chatInput = $('#chatinput');
+  if (oldCommTab && oldCommTab.inputClass) chatInput.removeClass(oldCommTab.inputClass);
+  if (commTab.inputClass) chatInput.addClass(commTab.inputClass);
+
   var mark = $('#chatinput mark');
-  var input = $('#chatinput input');
+  mark.text(commTab.inputPrompt);
 
   $('#chatcontrols .active').removeClass('active');
   $("#chatcontrols a[data-channel='" + tab + "']").addClass('active');
@@ -558,34 +562,7 @@ window.chat.chooseTab = function(tab) {
   var elm = $('#chat' + tab);
   elm.show();
 
-  switch(tab) {
-    case 'faction':
-      input.css('color', '');
-      mark.css('color', '');
-      mark.text('tell faction:');
-
-      chat.renderFaction(false);
-      break;
-
-    case 'all':
-      input.css('cssText', 'color: #f66 !important');
-      mark.css('cssText', 'color: #f66 !important');
-      mark.text('broadcast:');
-
-      chat.renderPublic(false);
-      break;
-
-    case 'alerts':
-      mark.css('cssText', 'color: #bbb !important');
-      input.css('cssText', 'color: #bbb !important');
-      mark.text('tell Jarvis:');
-
-      chat.renderAlerts(false);
-      break;
-
-    default:
-      throw new Error('chat.chooser was asked to handle unknown button: ' + tt);
-  }
+  chat.renderChannel(tab, false);
 
   if(elm.data('needsScrollTop')) {
     elm.data('ignoreNextScroll', true);
@@ -740,11 +717,12 @@ window.chat.setupPosting = function() {
 
 window.chat.postMsg = function() {
   var c = chat.getActive();
-  if(c == 'alerts')
-    return alert("Jarvis: A strange game. The only winning move is not to play. How about a nice game of chess?\n(You can't chat to the 'alerts' channel!)");
+  var commTab = chat.getCommTab(c);
 
   var msg = $.trim($('#chatinput input').val());
   if(!msg || msg === '') return;
+
+  if (c.sendMessage) return c.sendMessage(msg);
 
   if (c === 'debug') {
     var result;
