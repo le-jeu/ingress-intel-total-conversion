@@ -9,8 +9,9 @@ window.resetScrollOnNewPortal = function() {
   }
 };
 
-window.renderPortalDetails = function(guid, dontSelect) {
-  if (!dontSelect) selectPortal(window.portals[guid] ? guid : null, 'renderPortalDetails');
+window.renderPortalDetails = function(guid, forceSelect) {
+  if (forceSelect || selectedPortal !== guid)
+    selectPortal(window.portals[guid] ? guid : null, 'renderPortalDetails');
   if ($('#sidebar').is(':visible')) {
     window.resetScrollOnNewPortal();
     window.renderPortalDetails.lastVisible = guid;
