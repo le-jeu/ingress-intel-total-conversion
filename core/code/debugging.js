@@ -19,28 +19,35 @@ window.debug.printStackTrace = function() {
 
 
 window.debug.console = function() {
-  $('#debugconsole').text();
-}
-
-window.debug.console.show = function() {
-    $('#chat, #chatinput').show();
-    window.debug.console.create();
-    $('#chatinput mark').css('cssText', 'color: #bbb !important').text('debug:');
-    $('#chat > div').hide();
-    $('#debugconsole').show();
-    $('#chatcontrols .active').removeClass('active');
-    $("#chatcontrols a:contains('debug')").addClass('active');
+  $('#chatdebug').text();
 }
 
 window.debug.console.create = function() {
-  if($('#debugconsole').length) return;
-  $('#chatcontrols').append('<a>debug</a>');
-  $('#chatcontrols a:last').click(window.debug.console.show);
-  $('#chat').append('<div style="display: none" id="debugconsole"><table></table></div>');
+  if (window.chat.addCommTab({
+      channel: 'debug',
+      name: 'Debug',
+      inputPrompt: 'debug:',
+      inputClass: 'debug',
+      sendMessage: function (msg) {
+        var result;
+        try {
+          result = eval(msg);
+        } catch (e) {
+          if (e.stack) { log.error(e.stack); }
+          throw e; // to trigger native error message
+        }
+        if (result !== undefined) {
+          log.error(result.toString());
+        }
+        return result;
+      },
+    })) {
+    $("#chatdebug").append('<table></table>');
+  }
 }
 
 window.debug.console.renderLine = function(text, errorType) {
-  debug.console.create();
+  // debug.console.create();
   switch(errorType) {
     case 'error':   var color = '#FF424D'; break;
     case 'warning': var color = '#FFDE42'; break;
@@ -67,7 +74,7 @@ window.debug.console.renderLine = function(text, errorType) {
   var t = '<time title="'+tb+'" data-timestamp="'+d.getTime()+'">'+ta+'</time>';
   var s = 'style="color:'+color+'"';
   var l = '<tr><td>'+t+'</td><td><mark '+s+'>'+errorType+'</mark></td><td>'+text+'</td></tr>';
-  $('#debugconsole table').prepend(l);
+  $('#chatdebug table').append(l);
 }
 
 window.debug.console.log = function(text) {
@@ -86,7 +93,7 @@ window.debug.console.overwriteNative = function() {
   window.debug.console.create();
 
   var nativeConsole = window.console;
-  window.console = {};
+  window.console = $.extend({}, window.console);
 
   function overwrite(which) {
     window.console[which] = function() {
