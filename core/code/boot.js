@@ -274,11 +274,59 @@ window.setupMap = function() {
     }
   });
 
+  window.map.on('overlayadd overlayremove', function(e) {
+    var displayed = (e.type == 'overlayadd');
+    if (displayed && e.name in window._filters)
+      delete window._filters[e.name];
+    if (!displayed) {
+      switch (e.name) {
+        case 'Unclaimed/Placeholder Portals':
+          window._filters[e.name] = { team: 'N' };
+          break;
+        case 'Level 1 Portals':
+          window._filters[e.name] = { level: 1 };
+          break;
+        case 'Level 2 Portals':
+          window._filters[e.name] = { level: 2 };
+          break;
+        case 'Level 3 Portals':
+          window._filters[e.name] = { level: 3 };
+          break;
+        case 'Level 4 Portals':
+          window._filters[e.name] = { level: 4 };
+          break;
+        case 'Level 5 Portals':
+          window._filters[e.name] = { level: 5 };
+          break;
+        case 'Level 6 Portals':
+          window._filters[e.name] = { level: 6 };
+          break;
+        case 'Level 7 Portals':
+          window._filters[e.name] = { level: 7 };
+          break;
+        case 'Level 8 Portals':
+          window._filters[e.name] = { level: 8 };
+          break;
+        case 'Resistance':
+          window._filters[e.name] = { team: 'R' };
+          break;
+        case 'Enlightened':
+          window._filters[e.name] = { team: 'E' };
+          break;
+      }
+    }
+    for (var guid in window.portals) {
+      var p = window.portals[guid];
+      if (window.filterPortal(p)) p.addTo(window.map);
+      else p.remove();
+    }
+  });
+
   var baseLayers = createDefaultBaseMapLayers();
 
   window.layerChooser = new L.Control.Layers(baseLayers, addLayers);
 
-  // Remove the hidden layer after layerChooser built, to avoid messing up ordering of layers 
+  // Remove the hidden layer after layerChooser built, to avoid messing up ordering of layers
   $.each(hiddenLayer, function(ind, layer){
     map.removeLayer(layer);
 
