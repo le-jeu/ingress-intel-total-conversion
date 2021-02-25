@@ -113,7 +113,7 @@ const findVirus = function (guids, data) {
       || log.portal.latE6 !== last_data['comm-filter'].portal.latE6
       || log.portal.lngE6 !== last_data['comm-filter'].portal.lngE6) {
       last_data = parseData;
-      log.virus = false;
+      log.virus = log.portal.team === parseData.player.team;
     } else {
       log.virus = last_data.guid;
       last_data['comm-filter'].virus = true;
