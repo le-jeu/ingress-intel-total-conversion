@@ -229,7 +229,8 @@ window.Render.prototype.deletePortalEntity = function(guid) {
 window.Render.prototype.deleteLinkEntity = function(guid) {
   if (guid in window.links) {
     var l = window.links[guid];
-    linksFactionLayers[l.options.team].removeLayer(l);
+    l.remove();
+    // linksFactionLayers[l.options.team].removeLayer(l);
     delete window.links[guid];
     window.runHooks('linkRemoved', {link: l, data: l.options.data });
   }
@@ -240,8 +241,8 @@ window.Render.prototype.deleteFieldEntity = function(guid) {
   if (guid in window.fields) {
     var f = window.fields[guid];
     var fd = f.options.details;
-
-    fieldsFactionLayers[f.options.team].removeLayer(f);
+    f.remove();
+    // fieldsFactionLayers[f.options.team].removeLayer(f);
     delete window.fields[guid];
     window.runHooks('fieldRemoved', {field: f, data: f.options.data });
   }
@@ -442,8 +443,10 @@ window.Render.prototype.createFieldEntity = function(ent) {
 
   window.fields[ent[0]] = poly;
 
+  if (window.filterField(poly)) poly.addTo(window.map);
+
   // TODO? postpone adding to the layer??
-  fieldsFactionLayers[poly.options.team].addLayer(poly);
+  //fieldsFactionLayers[poly.options.team].addLayer(poly);
 }
 
 window.Render.prototype.createLinkEntity = function(ent,faked) {
@@ -508,7 +511,9 @@ window.Render.prototype.createLinkEntity = function(ent,faked) {
 
   window.links[ent[0]] = poly;
 
-  linksFactionLayers[poly.options.team].addLayer(poly);
+  if (window.filterLink(poly)) poly.addTo(window.map);
+
+  //linksFactionLayers[poly.options.team].addLayer(poly);
 }
 
 

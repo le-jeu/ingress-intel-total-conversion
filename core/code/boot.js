@@ -230,21 +230,21 @@ window.setupMap = function() {
     map.addLayer (factionLayers[fac]);
   }
 
-  var setFactionLayersState = function(fac,enabled) {
-    if (enabled) {
-      if (!fieldsLayer.hasLayer(fieldsFactionLayers[fac])) fieldsLayer.addLayer (fieldsFactionLayers[fac]);
-      if (!linksLayer.hasLayer(linksFactionLayers[fac])) linksLayer.addLayer (linksFactionLayers[fac]);
-      for (var lvl in portalsLayers) {
-        if (!portalsLayers[lvl].hasLayer(portalsFactionLayers[lvl][fac])) portalsLayers[lvl].addLayer (portalsFactionLayers[lvl][fac]);
-      }
-    } else {
-      if (fieldsLayer.hasLayer(fieldsFactionLayers[fac])) fieldsLayer.removeLayer (fieldsFactionLayers[fac]);
-      if (linksLayer.hasLayer(linksFactionLayers[fac])) linksLayer.removeLayer (linksFactionLayers[fac]);
-      for (var lvl in portalsLayers) {
-        if (portalsLayers[lvl].hasLayer(portalsFactionLayers[lvl][fac])) portalsLayers[lvl].removeLayer (portalsFactionLayers[lvl][fac]);
-      }
-    }
-  }
+  // var setFactionLayersState = function(fac,enabled) {
+  //   if (enabled) {
+  //     if (!fieldsLayer.hasLayer(fieldsFactionLayers[fac])) fieldsLayer.addLayer (fieldsFactionLayers[fac]);
+  //     if (!linksLayer.hasLayer(linksFactionLayers[fac])) linksLayer.addLayer (linksFactionLayers[fac]);
+  //     for (var lvl in portalsLayers) {
+  //       if (!portalsLayers[lvl].hasLayer(portalsFactionLayers[lvl][fac])) portalsLayers[lvl].addLayer (portalsFactionLayers[lvl][fac]);
+  //     }
+  //   } else {
+  //     if (fieldsLayer.hasLayer(fieldsFactionLayers[fac])) fieldsLayer.removeLayer (fieldsFactionLayers[fac]);
+  //     if (linksLayer.hasLayer(linksFactionLayers[fac])) linksLayer.removeLayer (linksFactionLayers[fac]);
+  //     for (var lvl in portalsLayers) {
+  //       if (portalsLayers[lvl].hasLayer(portalsFactionLayers[lvl][fac])) portalsLayers[lvl].removeLayer (portalsFactionLayers[lvl][fac]);
+  //     }
+  //   }
+  // }
 
   // to avoid any favouritism, we'll put the player's own faction layer first
   if (PLAYER.team == 'RESISTANCE') {
@@ -257,22 +257,22 @@ window.setupMap = function() {
   if (!isLayerGroupDisplayed('Resistance', true)) hiddenLayer.push (factionLayers[TEAM_RES]);
   if (!isLayerGroupDisplayed('Enlightened', true)) hiddenLayer.push (factionLayers[TEAM_ENL]);
 
-  setFactionLayersState (TEAM_NONE, true);
-  setFactionLayersState (TEAM_RES, isLayerGroupDisplayed('Resistance', true));
-  setFactionLayersState (TEAM_ENL, isLayerGroupDisplayed('Enlightened', true));
+  // setFactionLayersState (TEAM_NONE, true);
+  // setFactionLayersState (TEAM_RES, isLayerGroupDisplayed('Resistance', true));
+  // setFactionLayersState (TEAM_ENL, isLayerGroupDisplayed('Enlightened', true));
 
   // NOTE: these events are fired by the layer chooser, so won't happen until that's created and added to the map
-  window.map.on('overlayadd overlayremove', function(e) {
-    var displayed = (e.type == 'overlayadd');
-    switch (e.name) {
-      case 'Resistance':
-        setFactionLayersState (TEAM_RES, displayed);
-        break;
-      case 'Enlightened':
-        setFactionLayersState (TEAM_ENL, displayed);
-        break;
-    }
-  });
+  // window.map.on('overlayadd overlayremove', function(e) {
+  //   var displayed = (e.type == 'overlayadd');
+  //   switch (e.name) {
+  //     case 'Resistance':
+  //       setFactionLayersState (TEAM_RES, displayed);
+  //       break;
+  //     case 'Enlightened':
+  //       setFactionLayersState (TEAM_ENL, displayed);
+  //       break;
+  //   }
+  // });
 
   window.map.on('overlayadd overlayremove', function(e) {
     var displayed = (e.type == 'overlayadd');
@@ -281,37 +281,43 @@ window.setupMap = function() {
     if (!displayed) {
       switch (e.name) {
         case 'Unclaimed/Placeholder Portals':
-          window._filters[e.name] = { team: 'N' };
+          window._filters[e.name] = { portal: true, data: { team: 'N' } };
           break;
         case 'Level 1 Portals':
-          window._filters[e.name] = { level: 1 };
+          window._filters[e.name] = { portal: true, data: { level: 1 } };
           break;
         case 'Level 2 Portals':
-          window._filters[e.name] = { level: 2 };
+          window._filters[e.name] = { portal: true, data: { level: 2 } };
           break;
         case 'Level 3 Portals':
-          window._filters[e.name] = { level: 3 };
+          window._filters[e.name] = { portal: true, data: { level: 3 } };
           break;
         case 'Level 4 Portals':
-          window._filters[e.name] = { level: 4 };
+          window._filters[e.name] = { portal: true, data: { level: 4 } };
           break;
         case 'Level 5 Portals':
-          window._filters[e.name] = { level: 5 };
+          window._filters[e.name] = { portal: true, data: { level: 5 } };
           break;
         case 'Level 6 Portals':
-          window._filters[e.name] = { level: 6 };
+          window._filters[e.name] = { portal: true, data: { level: 6 } };
           break;
         case 'Level 7 Portals':
-          window._filters[e.name] = { level: 7 };
+          window._filters[e.name] = { portal: true, data: { level: 7 } };
           break;
         case 'Level 8 Portals':
-          window._filters[e.name] = { level: 8 };
+          window._filters[e.name] = { portal: true, data: { level: 8 } };
           break;
         case 'Resistance':
-          window._filters[e.name] = { team: 'R' };
+          window._filters[e.name] = { portal: true, link: true, field: true, data: { team: 'R' } };
           break;
         case 'Enlightened':
-          window._filters[e.name] = { team: 'E' };
+          window._filters[e.name] = { portal: true, link: true, field: true, data: { team: 'E' } };
+          break;
+        case 'Links':
+          window._filters[e.name] = { link: true };
+          break
+        case 'Fields':
+          window._filters[e.name] = { field: true };
           break;
       }
     }
@@ -319,6 +325,16 @@ window.setupMap = function() {
       var p = window.portals[guid];
       if (window.filterPortal(p)) p.addTo(window.map);
       else p.remove();
+    }
+    for (var guid in window.links) {
+      var link = window.links[guid];
+      if (window.filterLink(link)) link.addTo(window.map);
+      else link.remove();
+    }
+    for (var guid in window.fields) {
+      var field = window.fields[guid];
+      if (window.filterField(field)) field.addTo(window.map);
+      else field.remove();
     }
   });
 
