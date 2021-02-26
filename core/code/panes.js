@@ -10,23 +10,19 @@ window.show = function(id) {
 
   runHooks("paneChanged", id);
 
-  switch(id) {
-    case 'all':
-    case 'faction':
-    case 'alerts':
-      window.chat.show(id);
-      break;
-    case 'debug':
-      window.debug.console.show();
-      break;
-    case 'map':
-      window.smartphone.mapButton.click();
-      $('#portal_highlight_select').show();
-      $('#farm_level_select').show();
-      break;
-    case 'info':
-      window.smartphone.sideButton.click();
-      break;
+  // look for comm tab first
+  if (window.chat.getCommTab(id)) window.chat.show(id);
+  else {
+    switch(id) {
+      case 'map':
+        window.smartphone.mapButton.click();
+        $('#portal_highlight_select').show();
+        $('#farm_level_select').show();
+        break;
+      case 'info':
+        window.smartphone.sideButton.click();
+        break;
+    }
   }
 
   if (typeof android !== 'undefined' && android && android.switchToPane) {
