@@ -23,27 +23,25 @@ window.debug.console = function() {
 }
 
 window.debug.console.create = function() {
-  if (window.chat.addCommTab({
-      channel: 'debug',
-      name: 'Debug',
-      inputPrompt: 'debug:',
-      inputClass: 'debug',
-      sendMessage: function (msg) {
-        var result;
-        try {
-          result = eval(msg);
-        } catch (e) {
-          if (e.stack) { log.error(e.stack); }
-          throw e; // to trigger native error message
-        }
-        if (result !== undefined) {
-          log.error(result.toString());
-        }
-        return result;
-      },
-    })) {
-    $("#chatdebug").append('<table></table>');
-  }
+  window.chat.addCommTab({
+    channel: 'debug',
+    name: 'Debug',
+    inputPrompt: 'debug:',
+    inputClass: 'debug',
+    sendMessage: function (msg) {
+      var result;
+      try {
+        result = eval(msg);
+      } catch (e) {
+        if (e.stack) { log.error(e.stack); }
+        throw e; // to trigger native error message
+      }
+      if (result !== undefined) {
+        log.error(result.toString());
+      }
+      return result;
+    },
+  });
 }
 
 window.debug.console.renderLine = function(text, errorType) {

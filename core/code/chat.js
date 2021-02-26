@@ -646,7 +646,7 @@ function createCommTab (commTab) {
   $(accessLink).appendTo(chatControls).click(window.chat.chooser);
 
   var channelDiv = L.Util.template(
-    '<div id="chat{channel}"></div>',
+    '<div id="chat{channel}"><table></table></div>',
     commTab
   );
   var elm = $(channelDiv).appendTo(chatDiv);
@@ -670,6 +670,7 @@ function createCommTab (commTab) {
   }
 }
 
+var isTabsSetup = false;
 window.chat.addCommTab = function (commTab) {
   // deny reserved name
   if (commTab.channel == 'info' || commTab.channel == 'map') {
@@ -684,7 +685,7 @@ window.chat.addCommTab = function (commTab) {
   chat.commTabs.push(commTab);
   commTab.index = chat.commTabs.length;
 
-  createCommTab(commTab);
+  if (isTabsSetup) createCommTab(commTab);
 
   return true;
 };
@@ -695,6 +696,7 @@ window.chat.addCommTab = function (commTab) {
 //
 
 window.chat.setupTabs = function () {
+  isTabsSetup = true;
   window.chat.commTabs.forEach(function (entry, i) {
     entry.index = i+1;
     chat.initChannelData(entry);
