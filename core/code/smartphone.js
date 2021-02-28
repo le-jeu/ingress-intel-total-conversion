@@ -172,6 +172,15 @@ window.runOnSmartphonesAfterBoot = function() {
     addHook('portalSelected', window.setAndroidPermalink);
   }
 
+  if (window.useAndroidPanes()) {
+    window.addMobilePane('info', null, null, function () {
+      return $('#scrollwrapper').show();
+    });
+    window.addMobilePane('all', null, null, window.chat.show);
+    window.addMobilePane('faction', null, null, window.chat.show);
+    window.addMobilePane('alerts', null, null, window.chat.show);
+  }
+
 
   // for some reason, leaflet misses the WebView size being set at startup on IITC Mobile
   // create a short timer that checks for this issue
