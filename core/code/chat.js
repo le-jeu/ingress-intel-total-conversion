@@ -488,7 +488,7 @@ window.chat.renderMsg = function(msg, nick, time, team, msgToPlayer, systemNarro
   var ta = unixTimeToHHmm(time);
   var tb = unixTimeToDateTimeString(time, true);
   //add <small> tags around the milliseconds
-  tb = (tb.slice(0,19)+'<small class="milliseconds">'+tb.slice(19)+'</small>').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  tb = tb.replace(/([,.]\d{3})/, '&lt;small class=&quot;milliseconds&quot;&gt;$1&lt;/small&gt;');
 
   // help cursor via “#chat time”
   var t = '<time title="'+tb+'" data-timestamp="'+time+'">'+ta+'</time>';
