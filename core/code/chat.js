@@ -167,57 +167,6 @@ window.chat.renderChannel = function(channel, oldMsgsWereAdded) {
 }
 
 //
-// faction
-//
-
-window.chat.requestFaction = function(getOlderMsgs, isRetry) {
-  return window.chat.requestChannel('faction', getOlderMsgs, isRetry);
-};
-
-window.chat.handleFaction = function(data, olderMsgs, ascendingTimestampOrder) {
-  return window.chat.handleChannel('faction', data, olderMsgs, ascendingTimestampOrder);
-};
-
-window.chat.renderFaction = function(oldMsgsWereAdded) {
-  return window.chat.renderChannel('faction', oldMsgsWereAdded);
-};
-
-
-//
-// all
-//
-
-window.chat.requestPublic = function(getOlderMsgs, isRetry) {
-  return window.chat.requestChannel('all', getOlderMsgs, isRetry);
-};
-
-window.chat.handlePublic = function(data, olderMsgs, ascendingTimestampOrder) {
-  return window.chat.handleChannel('all', data, olderMsgs, ascendingTimestampOrder);
-};
-
-window.chat.renderPublic = function(oldMsgsWereAdded) {
-  return window.chat.renderChannel('all', oldMsgsWereAdded);
-};
-
-
-//
-// alerts
-//
-
-window.chat.requestAlerts = function(getOlderMsgs, isRetry) {
-  return window.chat.requestChannel('alerts', getOlderMsgs, isRetry);
-};
-
-window.chat.handleAlerts = function(data, olderMsgs, ascendingTimestampOrder) {
-  return window.chat.handleChannel('alerts', data, olderMsgs, ascendingTimestampOrder);
-};
-
-window.chat.renderAlerts = function(oldMsgsWereAdded) {
-  return window.chat.renderChannel('alerts', oldMsgsWereAdded);
-};
-
-
-//
 // common
 //
 
