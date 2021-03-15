@@ -204,12 +204,13 @@ window.unixTimeToString = function(time, full) {
 // formatted in ISO-style YYYY-MM-DD hh:mm:ss.mmm - but using local timezone
 window.unixTimeToDateTimeString = function(time, millisecond) {
   if(!time) return null;
-  var o = new Intl.DateTimeFormat('default', {
+  var options = {
     year: 'numeric', month: 'numeric', day: 'numeric',
     hour: 'numeric', minute: 'numeric', second: 'numeric',
     // hour12: false,
-  });
-  if (millisecond) o.fractionalSecondDigits = 3;
+  }
+  if (millisecond) options.fractionalSecondDigits = 3;
+  var o = new Intl.DateTimeFormat('default', options);
   var d = new Date(typeof time === 'string' ? parseInt(time) : time);
   return o.format(d);
 }
