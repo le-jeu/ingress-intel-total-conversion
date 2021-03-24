@@ -1,7 +1,7 @@
 // @author         jonatkins
 // @name           Scoring cycle / checkpoint times
 // @category       Info
-// @version        0.1.0
+// @version        0.2.0
 // @description    Show the times used for the septicycle and checkpoints for regional scoreboards.
 
 
@@ -9,12 +9,17 @@
 var scoreCycleTimes = {};
 window.plugin.scoreCycleTimes = scoreCycleTimes;
 
-scoreCycleTimes.CHECKPOINT = 5*60*60; // 5 hours per checkpoint
-scoreCycleTimes.CYCLE = 7*25*60*60;   // 7 25 hour 'days' per cycle
+scoreCycleTimes.CHECKPOINT = 5 * 60 * 60 * 1000; // 5 hours per checkpoint
+scoreCycleTimes.CYCLE = 7 * 5 * scoreCycleTimes.CHECKPOINT; // 7 25-hour 'days' per cycle
 scoreCycleTimes.locale = navigator.languages;
 scoreCycleTimes.dateTimeFormat = {
   year: 'numeric', month: '2-digit', day: '2-digit',
   hour: '2-digit', minute: '2-digit'
+};
+
+scoreCycleTimes.formatRow = function (label, time) {
+  var dateTime = new Date(time).toLocaleString(scoreCycleTimes.locale, scoreCycleTimes.dateTimeFormat);
+  return '<tr><td>' + label + '</td><td>' + dateTime + '</td></tr>';
 };
 
 scoreCycleTimes.update = function () {
@@ -24,26 +29,19 @@ scoreCycleTimes.update = function () {
   // when regional scoreboards were introduced, the first cycle would have started at 2014-01-15 10:00 UTC - but it was
   // a few checkpoints in when scores were first added
 
-  var now = new Date().getTime();
+  var now = Date.now();
 
-  var cycleStart = Math.floor(now / (window.plugin.scoreCycleTimes.CYCLE*1000)) * (window.plugin.scoreCycleTimes.CYCLE*1000);
-  var cycleEnd = cycleStart + window.plugin.scoreCycleTimes.CYCLE*1000;
+  var cycleStart = Math.floor(now / scoreCycleTimes.CYCLE) * scoreCycleTimes.CYCLE;
+  var cycleEnd = cycleStart + scoreCycleTimes.CYCLE;
 
-  var checkpointStart = Math.floor(now / (window.plugin.scoreCycleTimes.CHECKPOINT*1000)) * (window.plugin.scoreCycleTimes.CHECKPOINT*1000);
-  var checkpointEnd = checkpointStart + window.plugin.scoreCycleTimes.CHECKPOINT*1000;
-
-  var o = new Intl.DateTimeFormat(scoreCycleTimes.locale, scoreCycleTimes.dateTimeFormat);
-
-  function formatRow (label, time) {
-    var dateTime = o.format(new Date(time));
-    return '<tr><td>'+label+'</td><td>'+dateTime+'</td></tr>';
-  }
+  var checkpointStart = Math.floor(now / scoreCycleTimes.CHECKPOINT) * scoreCycleTimes.CHECKPOINT;
+  var checkpointEnd = checkpointStart + scoreCycleTimes.CHECKPOINT;
 
   var html = '<table>'
-    + formatRow('Cycle start', cycleStart)
-    + formatRow('Previous checkpoint', checkpointStart)
-    + formatRow('Next checkpoint', checkpointEnd)
-    + formatRow('Cycle end', cycleEnd)
+    + scoreCycleTimes.formatRow('Cycle start', cycleStart)
+    + scoreCycleTimes.formatRow('Previous checkpoint', checkpointStart)
+    + scoreCycleTimes.formatRow('Next checkpoint', checkpointEnd)
+    + scoreCycleTimes.formatRow('Cycle end', cycleEnd)
     + '</table>';
 
   $('#score_cycle_times_display').html(html);
@@ -53,7 +51,9 @@ scoreCycleTimes.update = function () {
 
 function setup () {
   $('#sidebar').append('<div id="score_cycle_times_display"></div>');
-  $('#score_cycle_times_display').css({color: '#ffce00'});
+  $('<style>')
+    .html('#score_cycle_times_display { color: #ffce00; }')
+    .appendTo('head');
 
   scoreCycleTimes.update();
 }
