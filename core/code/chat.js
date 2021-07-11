@@ -423,7 +423,14 @@ window.chat.commTabs = [
 
 window.chat._channels = {};
 window.chat.initChannelData = function (commTab) {
-  window.chat._channels[commTab.channel] = {data:{}, guids: [], oldestTimestamp:-1, newestTimestamp:-1};
+  // preserve channel object
+  if (!window.chat._channels[commTab.channel]) window.chat._channels[commTab.channel] = {};
+  window.chat._channels[commTab.channel].data = {};
+  window.chat._channels[commTab.channel].guids = [];
+  window.chat._channels[commTab.channel].oldestTimestamp = -1;
+  delete window.chat._channels[commTab.channel].oldestGUID;
+  window.chat._channels[commTab.channel].newestTimestamp = -1;
+  delete window.chat._channels[commTab.channel].newestGUID;
 };
 
 window.chat.getActive = function() {
