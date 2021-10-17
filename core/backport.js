@@ -12,9 +12,10 @@ simpleMap([
   'iitcBuildDate',
 ], window, IITC);
 
-// chat.js
+// components
 simpleMap([
   'chat',
+  'artifact'
 ], window, IITC);
 
 

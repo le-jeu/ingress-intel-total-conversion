@@ -38,7 +38,7 @@ window.Render.prototype.clearPortalsOutsideBounds = function(bounds) {
   for (var guid in window.portals) {
     var p = portals[guid];
     // clear portals outside visible bounds - unless it's the selected portal, or it's relevant to artifacts
-    if (!bounds.contains(p.getLatLng()) && guid !== selectedPortal && !artifact.isInterestingPortal(guid)) {
+    if (!bounds.contains(p.getLatLng()) && guid !== selectedPortal && !IITC.artifact.isInterestingPortal(guid)) {
       this.deletePortalEntity(guid);
       count++;
     }
@@ -201,7 +201,7 @@ window.Render.prototype.bringPortalsToFront = function() {
   }
 
   // artifact portals are always brought to the front, above all others
-  $.each(artifact.getInterestingPortals(), function(i,guid) {
+  $.each(IITC.artifact.getInterestingPortals(), function(i,guid) {
     if (portals[guid] && portals[guid]._map) {
       portals[guid].bringToFront();
     }

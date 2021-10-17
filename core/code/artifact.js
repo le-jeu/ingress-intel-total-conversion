@@ -8,10 +8,10 @@
 // the artifact data includes details for the specific portals, so can be useful
 // 2014-02-06: intel site updates hint at new 'amar artifacts', likely following the same system as above
 
+var artifact = function() {}
+IITC.artifact = artifact;
 
-window.artifact = function() {}
-
-window.artifact.setup = function() {
+artifact.setup = function() {
   artifact.REFRESH_JITTER = 2*60;  // 2 minute random period so not all users refresh at once
   artifact.REFRESH_SUCCESS = 60*60;  // 60 minutes on success
   artifact.REFRESH_FAILURE = 2*60;  // 2 minute retry on failure
@@ -33,11 +33,11 @@ window.artifact.setup = function() {
       id: 'artifacts-toolbox-link',
       title: 'Show artifact portal list'
     })
-    .click(window.artifact.showArtifactList)
+    .click(artifact.showArtifactList)
     .appendTo('#toolbox');
 }
 
-window.artifact.requestData = function() {
+artifact.requestData = function() {
   if (isIdle()) {
     artifact.idle = true;
   } else {
@@ -45,14 +45,14 @@ window.artifact.requestData = function() {
   }
 }
 
-window.artifact.idleResume = function() {
+artifact.idleResume = function() {
   if (artifact.idle) {
     artifact.idle = false;
     artifact.requestData();
   }
 }
 
-window.artifact.handleSuccess = function(data) {
+artifact.handleSuccess = function(data) {
   artifact.processData (data);
 
   // start the next refresh at a multiple of REFRESH_SUCCESS seconds, plus a random REFRESH_JITTER amount to prevent excessive server hits at one time
@@ -62,14 +62,14 @@ window.artifact.handleSuccess = function(data) {
   setTimeout (artifact.requestData, nextTime - now);
 }
 
-window.artifact.handleFailure = function(data) {
+artifact.handleFailure = function(data) {
   // no useful data on failure - do nothing
 
   setTimeout (artifact.requestData, artifact.REFRESH_FAILURE*1000);
 }
 
 
-window.artifact.processData = function(data) {
+artifact.processData = function(data) {
 
   if (data.error || !data.result) {
     log.warn('Failed to find result in getArtifactPortals response');
@@ -88,7 +88,7 @@ window.artifact.processData = function(data) {
 }
 
 
-window.artifact.clearData = function() {
+artifact.clearData = function() {
   artifact.portalInfo = {};
   artifact.artifactTypes = {};
 
@@ -96,13 +96,13 @@ window.artifact.clearData = function() {
 }
 
 
-window.artifact.processResult = function (portals) {
+artifact.processResult = function (portals) {
   // portals is an object, keyed from the portal GUID, containing the portal entity array
 
   for (var guid in portals) {
     var ent = portals[guid];
     var data = decodeArray.portal(ent, 'summary');
-    
+
     if (!data.artifactBrief) {
       // 2/12/2017 - Shard removed from a portal leaves it in artifact results but has no artifactBrief
       continue;
@@ -142,34 +142,34 @@ window.artifact.processResult = function (portals) {
 
 }
 
-window.artifact.getArtifactTypes = function() {
+artifact.getArtifactTypes = function() {
   return Object.keys(artifact.artifactTypes);
 }
 
-window.artifact.isArtifact = function(type) {
+artifact.isArtifact = function(type) {
   return type in artifact.artifactTypes;
 }
 
 // used to render portals that would otherwise be below the visible level
-window.artifact.getArtifactEntities = function() {
+artifact.getArtifactEntities = function() {
   return artifact.entities;
 }
 
-window.artifact.getInterestingPortals = function() {
+artifact.getInterestingPortals = function() {
   return Object.keys(artifact.portalInfo);
 }
 
 // quick test for portal being relevant to artifacts - of any type
-window.artifact.isInterestingPortal = function(guid) {
+artifact.isInterestingPortal = function(guid) {
   return guid in artifact.portalInfo;
 }
 
 // get the artifact data for a specified artifact id (e.g. 'jarvis'), if it exists - otherwise returns something 'false'y
-window.artifact.getPortalData = function(guid,artifactId) {
+artifact.getPortalData = function(guid,artifactId) {
   return artifact.portalInfo[guid] && artifact.portalInfo[guid][artifactId];
 }
 
-window.artifact.updateLayer = function() {
+artifact.updateLayer = function() {
   artifact._layer.clearLayers();
 
   $.each(artifact.portalInfo, function(guid,data) {
@@ -222,7 +222,7 @@ window.artifact.updateLayer = function() {
 }
 
 
-window.artifact.showArtifactList = function() {
+artifact.showArtifactList = function() {
   var html = '';
 
   if (Object.keys(artifact.artifactTypes).length == 0) {

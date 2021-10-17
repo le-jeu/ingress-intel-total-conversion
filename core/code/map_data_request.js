@@ -244,7 +244,7 @@ window.MapDataRequest.prototype.refresh = function() {
   window.runHooks ('mapDataEntityInject', {callback: this.render.processGameEntities.bind(this.render)});
 
 
-  this.render.processGameEntities(artifact.getArtifactEntities(), 'summary');
+  this.render.processGameEntities(IITC.artifact.getArtifactEntities(), 'summary');
 
   var logMessage = 'requesting data tiles at zoom '+dataZoom;
   logMessage += ' (L'+tileParams.level+'+ portals';
