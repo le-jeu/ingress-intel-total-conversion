@@ -222,7 +222,7 @@ window.Render.prototype.deletePortalEntity = function(guid) {
     window.ornaments.removePortal(p);
     this.removePortalFromMapLayer(p);
     delete window.portals[guid];
-    window.runHooks('portalRemoved', {portal: p, data: p.options.data });
+    IITC.runHooks('portalRemoved', {portal: p, data: p.options.data });
   }
 }
 
@@ -231,7 +231,7 @@ window.Render.prototype.deleteLinkEntity = function(guid) {
     var l = window.links[guid];
     linksFactionLayers[l.options.team].removeLayer(l);
     delete window.links[guid];
-    window.runHooks('linkRemoved', {link: l, data: l.options.data });
+    IITC.runHooks('linkRemoved', {link: l, data: l.options.data });
   }
 }
 
@@ -243,7 +243,7 @@ window.Render.prototype.deleteFieldEntity = function(guid) {
 
     fieldsFactionLayers[f.options.team].removeLayer(f);
     delete window.fields[guid];
-    window.runHooks('fieldRemoved', {field: f, data: f.options.data });
+    IITC.runHooks('fieldRemoved', {field: f, data: f.options.data });
   }
 }
 
@@ -356,7 +356,7 @@ window.Render.prototype.createPortalEntity = function(ent, details) { // details
   marker.on('dblclick', handler_portal_dblclick);
   marker.on('contextmenu', handler_portal_contextmenu);
 
-  window.runHooks('portalAdded', {portal: marker, previousData: previousData});
+  IITC.runHooks('portalAdded', {portal: marker, previousData: previousData});
 
   window.portals[ent[0]] = marker;
 
@@ -438,7 +438,7 @@ window.Render.prototype.createFieldEntity = function(ent) {
     data: data,
   });
 
-  runHooks('fieldAdded',{field: poly});
+  IITC.runHooks('fieldAdded',{field: poly});
 
   window.fields[ent[0]] = poly;
 
@@ -504,7 +504,7 @@ window.Render.prototype.createLinkEntity = function(ent,faked) {
     data: data
   });
 
-  runHooks('linkAdded', {link: poly});
+  IITC.runHooks('linkAdded', {link: poly});
 
   window.links[ent[0]] = poly;
 

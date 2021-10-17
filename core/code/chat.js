@@ -191,7 +191,7 @@ chat.handleFaction = function(data, olderMsgs, ascendingTimestampOrder) {
   chat.writeDataToHash(data, chat._faction, false, olderMsgs, ascendingTimestampOrder);
   var oldMsgsWereAdded = old !== chat._faction.oldestGUID;
 
-  runHooks('factionChatDataAvailable', {raw: data, result: data.result, processed: chat._faction.data});
+  IITC.runHooks('factionChatDataAvailable', {raw: data, result: data.result, processed: chat._faction.data});
 
   chat.renderFaction(oldMsgsWereAdded);
 }
@@ -244,7 +244,7 @@ chat.handlePublic = function(data, olderMsgs, ascendingTimestampOrder) {
   chat.writeDataToHash(data, chat._public, undefined, olderMsgs, ascendingTimestampOrder);   //NOTE: isPublic passed as undefined - this is the 'all' channel, so not really public or private
   var oldMsgsWereAdded = old !== chat._public.oldestGUID;
 
-  runHooks('publicChatDataAvailable', {raw: data, result: data.result, processed: chat._public.data});
+  IITC.runHooks('publicChatDataAvailable', {raw: data, result: data.result, processed: chat._public.data});
 
   chat.renderPublic(oldMsgsWereAdded);
 
@@ -295,7 +295,7 @@ chat.handleAlerts = function(data, olderMsgs, ascendingTimestampOrder) {
   var oldMsgsWereAdded = old !== chat._alerts.oldestTimestamp;
 
 // no hoot for alerts - API change planned here...
-//  runHooks('alertsChatDataAvailable', {raw: data, result: data.result, processed: chat._alerts.data});
+//  IITC.runHooks('alertsChatDataAvailable', {raw: data, result: data.result, processed: chat._alerts.data});
 
   chat.renderAlerts(oldMsgsWereAdded);
 }
@@ -313,7 +313,7 @@ chat.renderAlerts = function(oldMsgsWereAdded) {
 chat.nicknameClicked = function(event, nickname) {
   var hookData = { event: event, nickname: nickname };
 
-  if (window.runHooks('nicknameClicked', hookData)) {
+  if (IITC.runHooks('nicknameClicked', hookData)) {
     chat.addNickname('@' + nickname);
   }
 

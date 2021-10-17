@@ -80,7 +80,7 @@ artifact.processData = function(data) {
   artifact.clearData();
 
   artifact.processResult(data.result);
-  runHooks('artifactsUpdated', {old: oldArtifacts, 'new': artifact.entities});
+  IITC.runHooks('artifactsUpdated', {old: oldArtifacts, 'new': artifact.entities});
 
   // redraw the artifact layer
   artifact.updateLayer();

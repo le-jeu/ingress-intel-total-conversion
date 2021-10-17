@@ -52,7 +52,7 @@ window.runOnSmartphonesBeforeBoot = function() {
 
   $('#chatcontrols').append(smartphone.mapButton).append(smartphone.sideButton);
 
-  window.addHook('portalDetailsUpdated', function(data) {
+  IITC.addHook('portalDetailsUpdated', function(data) {
     var x = $('.imgpreview img').removeClass('hide');
 
     if(!x.length) {
@@ -139,7 +139,7 @@ window.runOnSmartphonesAfterBoot = function() {
 
   // add a div/hook for updating mobile info
   $('#updatestatus').prepend('<div id="mobileinfo" onclick="show(\'info\')"></div>');
-  window.addHook('portalSelected', window.smartphoneInfo);
+  IITC.addHook('portalSelected', window.smartphoneInfo);
   // init msg of status bar. hint for the user that a tap leads to the info screen
   $('#mobileinfo').html('<div style="text-align: center"><b>tap here for info screen</b></div>');
 

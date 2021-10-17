@@ -47,7 +47,7 @@ var handleResponse = function(deferred, guid, data, success) {
     }
 
     deferred.resolve(dict);
-    window.runHooks ('portalDetailLoaded', {guid:guid, success:success, details:dict, ent:ent});
+    IITC.runHooks ('portalDetailLoaded', {guid:guid, success:success, details:dict, ent:ent});
 
   } else {
     if (data && data.error == "RETRY") {
@@ -55,7 +55,7 @@ var handleResponse = function(deferred, guid, data, success) {
       doRequest(deferred, guid);
     } else {
       deferred.reject();
-      window.runHooks ('portalDetailLoaded', {guid:guid, success:success});
+      IITC.runHooks ('portalDetailLoaded', {guid:guid, success:success});
     }
   }
 

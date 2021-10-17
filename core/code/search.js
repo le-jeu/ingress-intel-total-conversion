@@ -3,7 +3,7 @@
 
 /*
 you can implement your own result provider by listing to the search hook:
-addHook('search', function(query) {});
+IITC.addHook('search', function(query) {});
 
 `query` is an object with the following members:
 - `term` is the term for which the user has searched
@@ -57,7 +57,7 @@ window.search.Query.prototype.init = function() {
     heightStyle: 'content',
   });
 
-  runHooks('search', this);
+  IITC.runHooks('search', this);
 };
 window.search.Query.prototype.show = function() {
   this.container.appendTo('#searchwrapper');
@@ -261,7 +261,7 @@ window.search.setup = function() {
 
 
 // search for portals
-addHook('search', function(query) {
+IITC.addHook('search', function(query) {
   var term = query.term.toLowerCase();
   var teams = ['NEU','RES','ENL'];
 
@@ -296,7 +296,7 @@ addHook('search', function(query) {
 
 // search for locations
 // TODO: recognize 50°31'03.8"N 7°59'05.3"E and similar formats
-addHook('search', function(query) {
+IITC.addHook('search', function(query) {
   var locations = query.term.match(/[+-]?\d+\.\d+,[+-]?\d+\.\d+/g);
   var added = {};
   if(!locations) return;
@@ -328,7 +328,7 @@ addHook('search', function(query) {
 
 
 // search on OpenStreetMap
-addHook('search', function(query) {
+IITC.addHook('search', function(query) {
   if(!query.confirmed) return;
 
   // Viewbox search orders results so they're closer to the viewbox

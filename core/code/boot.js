@@ -224,7 +224,7 @@ function boot () {
   // setTimeout('window.map.invalidateSize(false);', 500);
 
   window.iitcLoaded = true;
-  window.runHooks('iitcLoaded');
+  IITC.runHooks('iitcLoaded');
 }
 
 try {

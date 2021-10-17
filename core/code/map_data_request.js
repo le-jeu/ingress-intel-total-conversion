@@ -72,7 +72,7 @@ window.MapDataRequest = function() {
 
   // add a portalDetailLoaded hook, so we can use the extended details to update portals on the map
   var _this = this;
-  addHook('portalDetailLoaded', function(data){
+  IITC.addHook('portalDetailLoaded', function(data){
     if(data.success) {
       _this.render.createPortalEntity(data.ent, 'detailed');
     }
@@ -237,11 +237,11 @@ window.MapDataRequest.prototype.refresh = function() {
   this.fetchedDataParams = { bounds: dataBounds, mapZoom: mapZoom, dataZoom: dataZoom };
 
 
-  window.runHooks ('mapDataRefreshStart', {bounds: bounds, mapZoom: mapZoom, dataZoom: dataZoom, minPortalLevel: tileParams.level, tileBounds: dataBounds});
+  IITC.runHooks ('mapDataRefreshStart', {bounds: bounds, mapZoom: mapZoom, dataZoom: dataZoom, minPortalLevel: tileParams.level, tileBounds: dataBounds});
 
   this.render.startRenderPass(tileParams.level, dataBounds);
 
-  window.runHooks ('mapDataEntityInject', {callback: this.render.processGameEntities.bind(this.render)});
+  IITC.runHooks ('mapDataEntityInject', {callback: this.render.processGameEntities.bind(this.render)});
 
 
   this.render.processGameEntities(IITC.artifact.getArtifactEntities(), 'summary');
@@ -324,7 +324,7 @@ window.MapDataRequest.prototype.refresh = function() {
 
   // technically a request hasn't actually finished - however, displayed portal data has been refreshed
   // so as far as plugins are concerned, it should be treated as a finished request
-  window.runHooks('requestFinished', {success: true});
+  IITC.runHooks('requestFinished', {success: true});
 
   log.log ('done request preparation (cleared out-of-bounds and invalid for zoom, and rendered cached data)');
 
@@ -514,7 +514,7 @@ window.MapDataRequest.prototype.handleResponse = function (data, tiles, success)
         this.debugTiles.setState (id, 'retrying');
       }
 
-      window.runHooks('requestFinished', {success: false});
+      IITC.runHooks('requestFinished', {success: false});
 
     } else {
       for (var i in tiles) {
@@ -523,7 +523,7 @@ window.MapDataRequest.prototype.handleResponse = function (data, tiles, success)
         this.debugTiles.setState (id, 'request-fail');
       }
 
-      window.runHooks('requestFinished', {success: false});
+      IITC.runHooks('requestFinished', {success: false});
     }
     unaccountedTiles = [];
   } else {
@@ -570,7 +570,7 @@ window.MapDataRequest.prototype.handleResponse = function (data, tiles, success)
     // TODO? check for any requested tiles in 'tiles' not being mentioned in the response - and handle as if it's a 'timeout'?
 
 
-    window.runHooks('requestFinished', {success: true});
+    IITC.runHooks('requestFinished', {success: true});
   }
 
   // set the queue delay based on any errors or timeouts
@@ -722,7 +722,7 @@ window.MapDataRequest.prototype.processRenderQueue = function() {
 
     log.log('finished requesting data! (took '+duration+' seconds to complete)');
 
-    window.runHooks ('mapDataRefreshEnd', {});
+    IITC.runHooks ('mapDataRefreshEnd', {});
 
     var longStatus = 'Tiles: ' + this.cachedTileCount + ' cached, ' +
                  this.successTileCount + ' loaded, ' +

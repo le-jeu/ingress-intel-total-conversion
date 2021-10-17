@@ -148,7 +148,7 @@ window.renderPortalDetails = function(guid) {
   // only run the hooks when we have a portalDetails object - most plugins rely on the extended data
   // TODO? another hook to call always, for any plugins that can work with less data?
   if (details) {
-    runHooks('portalDetailsUpdated', {guid: guid, portal: portal, portalDetails: details, portalData: data});
+    IITC.runHooks('portalDetailsUpdated', {guid: guid, portal: portal, portalDetails: details, portalData: data});
   }
 }
 
@@ -296,6 +296,6 @@ window.selectPortal = function(guid) {
 
   setPortalIndicators(newPortal);
 
-  runHooks('portalSelected', {selectedPortalGuid: guid, unselectedPortalGuid: oldPortalGuid});
+  IITC.runHooks('portalSelected', {selectedPortalGuid: guid, unselectedPortalGuid: oldPortalGuid});
   return update;
 }

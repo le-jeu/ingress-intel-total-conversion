@@ -8,7 +8,7 @@ window.show = function(id) {
   window.currentPane = id;
   window.hideall();
 
-  runHooks("paneChanged", id);
+  IITC.runHooks("paneChanged", id);
 
   switch(id) {
     case 'all':

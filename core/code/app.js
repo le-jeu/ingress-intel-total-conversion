@@ -101,7 +101,7 @@ window.runOnAppBeforeBoot = function () {
 
   // add iitc hooks ************************************************************
   if (app.switchToPane) {
-    window.addHook('paneChanged', function (name) { // https://stackoverflow.com/a/59158952/2520247
+    IITC.addHook('paneChanged', function (name) { // https://stackoverflow.com/a/59158952/2520247
       app.switchToPane(name);
     });
   }
@@ -156,7 +156,7 @@ window.runOnAppAfterBoot = function () {
     };
 
     window.map.on('moveend', setAppPermalink);
-    window.addHook('portalSelected', setAppPermalink);
+    IITC.addHook('portalSelected', setAppPermalink);
   }
 
   // hide layer chooser if booted with the iitcm app

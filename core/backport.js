@@ -22,8 +22,16 @@ simpleMap([
 
 // api
 simpleMap([
-    'postAjax',
-], window, IITC)
+  'postAjax',
+  'runHooks',
+  'addHook',
+  'removeHook',
+], window, IITC);
+
+// expose internals ?
+simpleMap([
+  '_hooks',
+], window, IITC);
 
 
 window.IITC = IITC = new Proxy(IITC, {

@@ -279,7 +279,7 @@ window.setupMap = function () {
 
   // adds a base layer to the map. done separately from the above,
   // so that plugins that add base layers can be the default
-  window.addHook('iitcLoaded', function () {
+  IITC.addHook('iitcLoaded', function () {
     var stored = layerChooser.getLayer(layerChooser.lastBaseLayerName);
     map.addLayer(stored || baseLayers['CartoDB Dark Matter']);
 
