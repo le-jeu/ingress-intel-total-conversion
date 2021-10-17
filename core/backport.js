@@ -17,15 +17,26 @@ simpleMap([
   'chat',
   'artifact',
   'requests',
-  'postAjax',
+  'DataCache',
 ], window, IITC);
+
+// api
+simpleMap([
+    'postAjax',
+], window, IITC)
 
 
 window.IITC = IITC = new Proxy(IITC, {
   get: function (obj, prop) {
     var d = window[prop];
     var e = obj[prop];
-    if (d && d !== e) obj[prop] = d;
+    if (d && !e) {
+      console.info('namespace IITC: missing', prop);
+      obj[prop] = d;
+    } else if (d && d !== e) {
+      console.warn('namespace IITC: window change', prop);
+      obj[prop] = d;
+    }
     return obj[prop];
   },
 });
