@@ -252,7 +252,7 @@ window.setupMap = function () {
   // ensures order of calls
   map.on('movestart', function () {
     window.mapRunsUserAction = true;
-    window.requests.abort();
+    IITC.requests.abort();
     window.startRefreshTimeout(-1);
   });
   map.on('moveend', function () {

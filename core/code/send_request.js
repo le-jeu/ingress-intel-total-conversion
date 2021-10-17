@@ -11,18 +11,18 @@
 window.postAjax = function(action, data, successCallback, errorCallback) {
   // state management functions... perhaps should be outside of this func?
 
-//  var remove = function(data, textStatus, jqXHR) { window.requests.remove(jqXHR); };
-//  var errCnt = function(jqXHR) { window.failedRequestCount++; window.requests.remove(jqXHR); };
+//  var remove = function(data, textStatus, jqXHR) { IITC.requests.remove(jqXHR); };
+//  var errCnt = function(jqXHR) { IITC.failedRequestCount++; IITC.requests.remove(jqXHR); };
 
   if (window.latestFailedRequestTime && window.latestFailedRequestTime < Date.now()-120*1000) {
     // no errors in the last two minutes - clear the error count
-    window.failedRequestCount = 0;
+    IITC.failedRequestCount = 0;
     window.latestFailedRequestTime = undefined;
   }
 
   var onError = function(jqXHR, textStatus, errorThrown) {
-    window.requests.remove(jqXHR);
-    window.failedRequestCount++;
+    IITC.requests.remove(jqXHR);
+    IITC.failedRequestCount++;
 
     window.latestFailedRequestTime = Date.now();
 
@@ -33,11 +33,11 @@ window.postAjax = function(action, data, successCallback, errorCallback) {
   };
 
   var onSuccess = function(data, textStatus, jqXHR) {
-    window.requests.remove(jqXHR);
+    IITC.requests.remove(jqXHR);
 
     // the Niantic server can return a HTTP success, but the JSON response contains an error. handle that sensibly
     if (data && data.error && data.error == 'out of date') {
-      window.failedRequestCount++;
+      IITC.failedRequestCount++;
       // let's call the error callback in thos case...
       if (errorCallback) {
         errorCallback(jqXHR, textStatus, "data.error == 'out of date'");
@@ -51,7 +51,7 @@ window.postAjax = function(action, data, successCallback, errorCallback) {
 
   // we set this flag when we want to block all requests due to having an out of date CURRENT_VERSION
   if (window.blockOutOfDateRequests) {
-    window.failedRequestCount++;
+    IITC.failedRequestCount++;
     window.latestFailedRequestTime = Date.now();
 
     // call the error callback, if one exists
@@ -89,7 +89,7 @@ window.postAjax = function(action, data, successCallback, errorCallback) {
 
 window.outOfDateUserPrompt = function()
 {
-  // we block all requests while the dialog is open. 
+  // we block all requests while the dialog is open.
   if (!window.blockOutOfDateRequests) {
     window.blockOutOfDateRequests = true;
 

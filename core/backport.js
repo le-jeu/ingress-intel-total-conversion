@@ -15,7 +15,8 @@ simpleMap([
 // components
 simpleMap([
   'chat',
-  'artifact'
+  'artifact',
+  'requests',
 ], window, IITC);
 
 

@@ -176,7 +176,7 @@ chat.handleFaction = function(data, olderMsgs, ascendingTimestampOrder) {
   $("#chatcontrols a:contains('faction')").removeClass('loading');
 
   if(!data || !data.result) {
-    window.failedRequestCount++;
+    IITC.failedRequestCount++;
     return log.warn('faction chat error. Waiting for next auto-refresh.');
   }
 
@@ -229,7 +229,7 @@ chat.handlePublic = function(data, olderMsgs, ascendingTimestampOrder) {
   $("#chatcontrols a:contains('all')").removeClass('loading');
 
   if(!data || !data.result) {
-    window.failedRequestCount++;
+    IITC.failedRequestCount++;
     return log.warn('public chat error. Waiting for next auto-refresh.');
   }
 
@@ -284,7 +284,7 @@ chat.handleAlerts = function(data, olderMsgs, ascendingTimestampOrder) {
   $("#chatcontrols a:contains('alerts')").removeClass('loading');
 
   if(!data || !data.result) {
-    window.failedRequestCount++;
+    IITC.failedRequestCount++;
     return log.warn('alerts chat error. Waiting for next auto-refresh.');
   }
 
@@ -749,7 +749,7 @@ chat.setup = function() {
     if(scrollBottom(t) === 0) chat.requestAlerts(false);
   });
 
-  window.requests.addRefreshFunction(chat.request);
+  IITC.requests.addRefreshFunction(chat.request);
 
   var cls = PLAYER.team === 'RESISTANCE' ? 'res' : 'enl';
   $('#chatinput mark').addClass(cls);
