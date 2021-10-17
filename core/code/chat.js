@@ -1,7 +1,8 @@
-window.chat = function() {};
+IITC.chat = function() {};
+var chat = IITC.chat;
 
 //WORK IN PROGRESS - NOT YET USED!!
-window.chat.commTabs = [
+chat.commTabs = [
 // channel: the COMM channel ('tab' parameter in server requests)
 // name: visible name
 // inputPrompt: string for the input prompt
@@ -16,7 +17,7 @@ window.chat.commTabs = [
 ];
 
 
-window.chat.handleTabCompletion = function() {
+chat.handleTabCompletion = function() {
   var el = $('#chatinput input');
   var curPos = el.get(0).selectionStart;
   var text = el.val();
@@ -52,8 +53,8 @@ window.chat.handleTabCompletion = function() {
 //
 
 
-window.chat._oldBBox = null;
-window.chat.genPostData = function(channel, storageHash, getOlderMsgs) {
+chat._oldBBox = null;
+chat.genPostData = function(channel, storageHash, getOlderMsgs) {
   if (typeof channel !== 'string') {
     throw new Error('API changed: isFaction flag now a channel string - all, faction, alerts');
   }
@@ -150,8 +151,8 @@ window.chat.genPostData = function(channel, storageHash, getOlderMsgs) {
 // faction
 //
 
-window.chat._requestFactionRunning = false;
-window.chat.requestFaction = function(getOlderMsgs, isRetry) {
+chat._requestFactionRunning = false;
+chat.requestFaction = function(getOlderMsgs, isRetry) {
   if(chat._requestFactionRunning && !isRetry) return;
   if(isIdle()) return renderUpdateStatus();
   chat._requestFactionRunning = true;
@@ -163,14 +164,14 @@ window.chat.requestFaction = function(getOlderMsgs, isRetry) {
     d,
     function(data, textStatus, jqXHR) { chat.handleFaction(data, getOlderMsgs, d.ascendingTimestampOrder); },
     isRetry
-      ? function() { window.chat._requestFactionRunning = false; }
-      : function() { window.chat.requestFaction(getOlderMsgs, true) }
+      ? function() { chat._requestFactionRunning = false; }
+      : function() { chat.requestFaction(getOlderMsgs, true) }
   );
 }
 
 
-window.chat._faction = {data:{}, oldestTimestamp:-1, newestTimestamp:-1};
-window.chat.handleFaction = function(data, olderMsgs, ascendingTimestampOrder) {
+chat._faction = {data:{}, oldestTimestamp:-1, newestTimestamp:-1};
+chat.handleFaction = function(data, olderMsgs, ascendingTimestampOrder) {
   chat._requestFactionRunning = false;
   $("#chatcontrols a:contains('faction')").removeClass('loading');
 
@@ -192,10 +193,10 @@ window.chat.handleFaction = function(data, olderMsgs, ascendingTimestampOrder) {
 
   runHooks('factionChatDataAvailable', {raw: data, result: data.result, processed: chat._faction.data});
 
-  window.chat.renderFaction(oldMsgsWereAdded);
+  chat.renderFaction(oldMsgsWereAdded);
 }
 
-window.chat.renderFaction = function(oldMsgsWereAdded) {
+chat.renderFaction = function(oldMsgsWereAdded) {
   chat.renderData(chat._faction.data, 'chatfaction', oldMsgsWereAdded);
 }
 
@@ -204,8 +205,8 @@ window.chat.renderFaction = function(oldMsgsWereAdded) {
 // all
 //
 
-window.chat._requestPublicRunning = false;
-window.chat.requestPublic = function(getOlderMsgs, isRetry) {
+chat._requestPublicRunning = false;
+chat.requestPublic = function(getOlderMsgs, isRetry) {
   if(chat._requestPublicRunning && !isRetry) return;
   if(isIdle()) return renderUpdateStatus();
   chat._requestPublicRunning = true;
@@ -217,13 +218,13 @@ window.chat.requestPublic = function(getOlderMsgs, isRetry) {
     d,
     function(data, textStatus, jqXHR) { chat.handlePublic(data, getOlderMsgs, d.ascendingTimestampOrder); },
     isRetry
-      ? function() { window.chat._requestPublicRunning = false; }
-      : function() { window.chat.requestPublic(getOlderMsgs, true) }
+      ? function() { chat._requestPublicRunning = false; }
+      : function() { chat.requestPublic(getOlderMsgs, true) }
   );
 }
 
-window.chat._public = {data:{}, oldestTimestamp:-1, newestTimestamp:-1};
-window.chat.handlePublic = function(data, olderMsgs, ascendingTimestampOrder) {
+chat._public = {data:{}, oldestTimestamp:-1, newestTimestamp:-1};
+chat.handlePublic = function(data, olderMsgs, ascendingTimestampOrder) {
   chat._requestPublicRunning = false;
   $("#chatcontrols a:contains('all')").removeClass('loading');
 
@@ -245,11 +246,11 @@ window.chat.handlePublic = function(data, olderMsgs, ascendingTimestampOrder) {
 
   runHooks('publicChatDataAvailable', {raw: data, result: data.result, processed: chat._public.data});
 
-  window.chat.renderPublic(oldMsgsWereAdded);
+  chat.renderPublic(oldMsgsWereAdded);
 
 }
 
-window.chat.renderPublic = function(oldMsgsWereAdded) {
+chat.renderPublic = function(oldMsgsWereAdded) {
   chat.renderData(chat._public.data, 'chatall', oldMsgsWereAdded);
 }
 
@@ -258,8 +259,8 @@ window.chat.renderPublic = function(oldMsgsWereAdded) {
 // alerts
 //
 
-window.chat._requestAlertsRunning = false;
-window.chat.requestAlerts = function(getOlderMsgs, isRetry) {
+chat._requestAlertsRunning = false;
+chat.requestAlerts = function(getOlderMsgs, isRetry) {
   if(chat._requestAlertsRunning && !isRetry) return;
   if(isIdle()) return renderUpdateStatus();
   chat._requestAlertsRunning = true;
@@ -271,14 +272,14 @@ window.chat.requestAlerts = function(getOlderMsgs, isRetry) {
     d,
     function(data, textStatus, jqXHR) { chat.handleAlerts(data, getOlderMsgs, d.ascendingTimestampOrder); },
     isRetry
-      ? function() { window.chat._requestAlertsRunning = false; }
-      : function() { window.chat.requestAlerts(getOlderMsgs, true) }
+      ? function() { chat._requestAlertsRunning = false; }
+      : function() { chat.requestAlerts(getOlderMsgs, true) }
   );
 }
 
 
-window.chat._alerts = {data:{}, oldestTimestamp:-1, newestTimestamp:-1};
-window.chat.handleAlerts = function(data, olderMsgs, ascendingTimestampOrder) {
+chat._alerts = {data:{}, oldestTimestamp:-1, newestTimestamp:-1};
+chat.handleAlerts = function(data, olderMsgs, ascendingTimestampOrder) {
   chat._requestAlertsRunning = false;
   $("#chatcontrols a:contains('alerts')").removeClass('loading');
 
@@ -296,10 +297,10 @@ window.chat.handleAlerts = function(data, olderMsgs, ascendingTimestampOrder) {
 // no hoot for alerts - API change planned here...
 //  runHooks('alertsChatDataAvailable', {raw: data, result: data.result, processed: chat._alerts.data});
 
-  window.chat.renderAlerts(oldMsgsWereAdded);
+  chat.renderAlerts(oldMsgsWereAdded);
 }
 
-window.chat.renderAlerts = function(oldMsgsWereAdded) {
+chat.renderAlerts = function(oldMsgsWereAdded) {
   chat.renderData(chat._alerts.data, 'chatalerts', oldMsgsWereAdded);
 }
 
@@ -309,11 +310,11 @@ window.chat.renderAlerts = function(oldMsgsWereAdded) {
 // common
 //
 
-window.chat.nicknameClicked = function(event, nickname) {
+chat.nicknameClicked = function(event, nickname) {
   var hookData = { event: event, nickname: nickname };
-  
+
   if (window.runHooks('nicknameClicked', hookData)) {
-    window.chat.addNickname('@' + nickname);
+    chat.addNickname('@' + nickname);
   }
 
   event.preventDefault();
@@ -321,7 +322,7 @@ window.chat.nicknameClicked = function(event, nickname) {
   return false;
 }
 
-window.chat.writeDataToHash = function(newData, storageHash, isPublicChannel, isOlderMsgs, isAscendingOrder) {
+chat.writeDataToHash = function(newData, storageHash, isPublicChannel, isOlderMsgs, isAscendingOrder) {
 
   if (newData.result.length > 0) {
     //track oldest + newest timestamps/GUID
@@ -389,7 +390,7 @@ window.chat.writeDataToHash = function(newData, storageHash, isPublicChannel, is
         var atPlayerName = markup[1].plain.replace(/^@/, "");
         msg += $('<div/>').html($('<span/>')
                           .attr('class', spanClass)
-                          .attr('onclick',"window.chat.nicknameClicked(event, '"+atPlayerName+"')")
+                          .attr('onclick',"window.IITC.chat.nicknameClicked(event, '"+atPlayerName+"')")
                           .text(markup[1].plain)).html();
         msgToPlayer = msgToPlayer || thisToPlayer;
         break;
@@ -402,7 +403,7 @@ window.chat.writeDataToHash = function(newData, storageHash, isPublicChannel, is
         msg += '<a onclick="'+js+'"'
           + ' title="'+markup[1].address+'"'
           + ' href="'+perma+'" class="help">'
-          + window.chat.getChatPortalName(markup[1])
+          + chat.getChatPortalName(markup[1])
           + '</a>';
         break;
 
@@ -443,7 +444,7 @@ window.chat.writeDataToHash = function(newData, storageHash, isPublicChannel, is
 }
 
 // Override portal names that are used over and over, such as 'US Post Office'
-window.chat.getChatPortalName = function(markup) {
+chat.getChatPortalName = function(markup) {
   var name = markup.name;
   if(name === 'US Post Office') {
     var address = markup.address.split(',');
@@ -455,7 +456,7 @@ window.chat.getChatPortalName = function(markup) {
 // renders data from the data-hash to the element defined by the given
 // ID. Set 3rd argument to true if it is likely that old data has been
 // added. Latter is only required for scrolling.
-window.chat.renderData = function(data, element, likelyWereOldMsgs) {
+chat.renderData = function(data, element, likelyWereOldMsgs) {
   var elm = $('#'+element);
   if(elm.is(':hidden')) return;
 
@@ -481,13 +482,13 @@ window.chat.renderData = function(data, element, likelyWereOldMsgs) {
 }
 
 
-window.chat.renderDivider = function(text) {
+chat.renderDivider = function(text) {
   var d = ' ──────────────────────────────────────────────────────────────────────────';
   return '<tr><td colspan="3" style="padding-top:3px"><summary>─ ' + text + d + '</summary></td></tr>';
 }
 
 
-window.chat.renderMsg = function(msg, nick, time, team, msgToPlayer, systemNarrowcast) {
+chat.renderMsg = function(msg, nick, time, team, msgToPlayer, systemNarrowcast) {
   var ta = unixTimeToHHmm(time);
   var tb = unixTimeToDateTimeString(time, true);
   //add <small> tags around the milliseconds
@@ -510,7 +511,7 @@ window.chat.renderMsg = function(msg, nick, time, team, msgToPlayer, systemNarro
   return '<tr><td>'+t+'</td><td>'+i[0]+'<mark class="nickname" ' + s + '>'+ nick+'</mark>'+i[1]+'</td><td>'+msg+'</td></tr>';
 }
 
-window.chat.addNickname= function(nick) {
+chat.addNickname= function(nick) {
   var c = document.getElementById("chattext");
   c.value = [c.value.trim(), nick].join(" ").trim() + " ";
   c.focus()
@@ -519,11 +520,11 @@ window.chat.addNickname= function(nick) {
 
 
 
-window.chat.getActive = function() {
+chat.getActive = function() {
   return $('#chatcontrols .active').text();
 }
 
-window.chat.tabToChannel = function(tab) {
+chat.tabToChannel = function(tab) {
   if (tab == 'faction') return 'faction';
   if (tab == 'alerts') return 'alerts';
   return 'all';
@@ -531,7 +532,7 @@ window.chat.tabToChannel = function(tab) {
 
 
 
-window.chat.toggle = function() {
+chat.toggle = function() {
   var c = $('#chat, #chatcontrols');
   if(c.hasClass('expand')) {
     c.removeClass('expand');
@@ -551,36 +552,36 @@ window.chat.toggle = function() {
 // instance: a unique string identifying the plugin requesting background COMM
 // channel: either 'all', 'faction' or (soon) 'alerts' - others possible in the future
 // flag: true for data wanted, false for not wanted
-window.chat.backgroundChannelData = function(instance,channel,flag) {
+chat.backgroundChannelData = function(instance,channel,flag) {
   //first, store the state for this instance
-  if (!window.chat.backgroundInstanceChannel) window.chat.backgroundInstanceChannel = {};
-  if (!window.chat.backgroundInstanceChannel[instance]) window.chat.backgroundInstanceChannel[instance] = {};
-  window.chat.backgroundInstanceChannel[instance][channel] = flag;
+  if (!chat.backgroundInstanceChannel) chat.backgroundInstanceChannel = {};
+  if (!chat.backgroundInstanceChannel[instance]) chat.backgroundInstanceChannel[instance] = {};
+  chat.backgroundInstanceChannel[instance][channel] = flag;
 
   //now, to simplify the request code, merge the flags for all instances into one
   // 1. clear existing overall flags
-  window.chat.backgroundChannels = {};
+  chat.backgroundChannels = {};
   // 2. for each instance monitoring COMM...
-  $.each(window.chat.backgroundInstanceChannel, function(instance,channels) {
+  $.each(chat.backgroundInstanceChannel, function(instance,channels) {
     // 3. and for each channel monitored by this instance...
-    $.each(window.chat.backgroundInstanceChannel[instance],function(channel,flag) {
+    $.each(chat.backgroundInstanceChannel[instance],function(channel,flag) {
       // 4. if it's monitored, set the channel flag
-      if (flag) window.chat.backgroundChannels[channel] = true;
+      if (flag) chat.backgroundChannels[channel] = true;
     });
   });
 
 }
 
 
-window.chat.request = function() {
+chat.request = function() {
   var channel = chat.tabToChannel(chat.getActive());
-  if (channel == 'faction' || (window.chat.backgroundChannels && window.chat.backgroundChannels['faction'])) {
+  if (channel == 'faction' || (chat.backgroundChannels && chat.backgroundChannels['faction'])) {
     chat.requestFaction(false);
   }
-  if (channel == 'all' || (window.chat.backgroundChannels && window.chat.backgroundChannels['all'])) {
+  if (channel == 'all' || (chat.backgroundChannels && chat.backgroundChannels['all'])) {
     chat.requestPublic(false);
   }
-  if (channel == 'alerts' || (window.chat.backgroundChannels && window.chat.backgroundChannels['alerts'])) {
+  if (channel == 'alerts' || (chat.backgroundChannels && chat.backgroundChannels['alerts'])) {
     chat.requestAlerts(false);
   }
 }
@@ -588,7 +589,7 @@ window.chat.request = function() {
 
 // checks if there are enough messages in the selected chat tab and
 // loads more if not.
-window.chat.needMoreMessages = function() {
+chat.needMoreMessages = function() {
   var activeTab = chat.getActive();
   if(activeTab === 'debug') return;
 
@@ -598,7 +599,7 @@ window.chat.needMoreMessages = function() {
   var hasScrollbar = scrollBottom(activeChat) !== 0 || activeChat.scrollTop() !== 0;
   var nearTop = activeChat.scrollTop() <= CHAT_REQUEST_SCROLL_TOP;
   if(hasScrollbar && !nearTop) return;
-  
+
   if(activeTab === 'faction')
     chat.requestFaction(true);
   else
@@ -606,7 +607,7 @@ window.chat.needMoreMessages = function() {
 };
 
 
-window.chat.chooseTab = function(tab) {
+chat.chooseTab = function(tab) {
   if (tab != 'all' && tab != 'faction' && tab != 'alerts') {
     log.warn('chat tab "'+tab+'" requested - but only "all", "faction" and "alerts" are valid - assuming "all" wanted');
     tab = 'all';
@@ -665,23 +666,23 @@ window.chat.chooseTab = function(tab) {
   }
 }
 
-window.chat.show = function(name) {
+chat.show = function(name) {
     window.isSmartphone()
         ? $('#updatestatus').hide()
         : $('#updatestatus').show();
     $('#chat, #chatinput').show();
 
-    window.chat.chooseTab(name);
+    chat.chooseTab(name);
 }
 
-window.chat.chooser = function(event) {
+chat.chooser = function(event) {
   var t = $(event.target);
   var tab = t.text();
-  window.chat.chooseTab(tab);
+  chat.chooseTab(tab);
 }
 
 // contains the logic to keep the correct scroll position.
-window.chat.keepScrollPosition = function(box, scrollBefore, isOldMsgs) {
+chat.keepScrollPosition = function(box, scrollBefore, isOldMsgs) {
   // If scrolled down completely, keep it that way so new messages can
   // be seen easily. If scrolled up, only need to fix scroll position
   // when old messages are added. New messages added at the bottom don’t
@@ -706,17 +707,17 @@ window.chat.keepScrollPosition = function(box, scrollBefore, isOldMsgs) {
 // setup
 //
 
-window.chat.setup = function() {
+chat.setup = function() {
   if (localStorage['iitc-chat-tab']) {
     chat.chooseTab(localStorage['iitc-chat-tab']);
  }
 
   $('#chatcontrols, #chat, #chatinput').show();
 
-  $('#chatcontrols a:first').click(window.chat.toggle);
+  $('#chatcontrols a:first').click(chat.toggle);
   $('#chatcontrols a').each(function(ind, elm) {
     if($.inArray($(elm).text(), ['all', 'faction', 'alerts']) !== -1)
-      $(elm).click(window.chat.chooser);
+      $(elm).click(chat.chooser);
   });
 
 
@@ -724,8 +725,8 @@ window.chat.setup = function() {
     $('#chatinput input').focus();
   });
 
-  window.chat.setupTime();
-  window.chat.setupPosting();
+  chat.setupTime();
+  chat.setupPosting();
 
   $('#chatfaction').scroll(function() {
     var t = $(this);
@@ -754,12 +755,12 @@ window.chat.setup = function() {
   $('#chatinput mark').addClass(cls);
 
   $(document).on('click', '.nickname', function(event) {
-    return window.chat.nicknameClicked(event, $(this).text());
+    return chat.nicknameClicked(event, $(this).text());
   });
 }
 
 
-window.chat.setupTime = function() {
+chat.setupTime = function() {
   var inputTime = $('#chatinput time');
   var updateTime = function() {
     if(window.isIdle()) return;
@@ -780,7 +781,7 @@ window.chat.setupTime = function() {
 //
 
 
-window.chat.setupPosting = function() {
+chat.setupPosting = function() {
   if (!isSmartphone()) {
     $('#chatinput input').keydown(function(event) {
       try {
@@ -790,7 +791,7 @@ window.chat.setupPosting = function() {
           event.preventDefault();
         } else if (kc === 9) { // tab
           event.preventDefault();
-          window.chat.handleTabCompletion();
+          chat.handleTabCompletion();
         }
       } catch (e) {
         log.error(e);
@@ -806,7 +807,7 @@ window.chat.setupPosting = function() {
 }
 
 
-window.chat.postMsg = function() {
+chat.postMsg = function() {
   var c = chat.getActive();
   if(c == 'alerts')
     return alert("Jarvis: A strange game. The only winning move is not to play. How about a nice game of chess?\n(You can't chat to the 'alerts' channel!)");

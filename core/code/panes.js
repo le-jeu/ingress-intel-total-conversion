@@ -14,7 +14,7 @@ window.show = function(id) {
     case 'all':
     case 'faction':
     case 'alerts':
-      window.chat.show(id);
+      IITC.chat.show(id);
       break;
     case 'debug':
       window.debug.console.show();
