@@ -12,7 +12,7 @@ var requestQueue = {};
 window.portalDetail = function() {};
 
 window.portalDetail.setup = function() {
-  cache = new DataCache();
+  cache = new IITC.DataCache();
 
   cache.startExpireInterval(20);
 }

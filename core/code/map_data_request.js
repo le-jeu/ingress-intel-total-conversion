@@ -5,7 +5,7 @@
 
 
 window.MapDataRequest = function() {
-  this.cache = new DataCache();
+  this.cache = new IITC.DataCache();
   this.render = new Render();
   this.debugTiles = new RenderDebugTiles();
 

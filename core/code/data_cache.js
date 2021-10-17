@@ -1,7 +1,7 @@
 // MAP DATA CACHE ///////////////////////////////////
-// cache for map data tiles. 
+// cache for map data tiles.
 
-window.DataCache = function() {
+var DataCache = function() {
   this.REQUEST_CACHE_FRESH_AGE = 3*60;  // if younger than this, use data in the cache rather than fetching from the server
 
   this.REQUEST_CACHE_MAX_AGE = 5*60;  // maximum cache age. entries are deleted from the cache after this time
@@ -21,10 +21,9 @@ window.DataCache = function() {
   this._cacheCharSize = 0;
 
   this._interval = undefined;
-
 }
 
-window.DataCache.prototype.store = function(qk,data,freshTime) {
+DataCache.prototype.store = function(qk,data,freshTime) {
   // fixme? common behaviour for objects is that properties are kept in the order they're added
   // this is handy, as it allows easy retrieval of the oldest entries for expiring
   // however, this is not guaranteed by the standards, but all our supported browsers work this way
@@ -42,7 +41,7 @@ window.DataCache.prototype.store = function(qk,data,freshTime) {
   this._cache[qk] = { time: time, expire: expire, dataStr: dataStr };
 }
 
-window.DataCache.prototype.remove = function(qk) {
+DataCache.prototype.remove = function(qk) {
   if (qk in this._cache) {
     this._cacheCharSize -= this._cache[qk].dataStr.length;
     delete this._cache[qk];
@@ -50,17 +49,17 @@ window.DataCache.prototype.remove = function(qk) {
 }
 
 
-window.DataCache.prototype.get = function(qk) {
+DataCache.prototype.get = function(qk) {
   if (qk in this._cache) return JSON.parse(this._cache[qk].dataStr);
   else return undefined;
 }
 
-window.DataCache.prototype.getTime = function(qk) {
+DataCache.prototype.getTime = function(qk) {
   if (qk in this._cache) return this._cache[qk].time;
   else return 0;
 }
 
-window.DataCache.prototype.isFresh = function(qk) {
+DataCache.prototype.isFresh = function(qk) {
   if (qk in this._cache) {
     var d = new Date();
     var t = d.getTime();
@@ -71,14 +70,14 @@ window.DataCache.prototype.isFresh = function(qk) {
   return undefined;
 }
 
-window.DataCache.prototype.startExpireInterval = function(period) {
+DataCache.prototype.startExpireInterval = function(period) {
   if (this._interval === undefined) {
     var savedContext = this;
     this._interval = setInterval (function() { savedContext.runExpire(); }, period*1000);
   }
 }
 
-window.DataCache.prototype.stopExpireInterval = function() {
+DataCache.prototype.stopExpireInterval = function() {
   if (this._interval !== undefined) {
     clearInterval(this._interval);
     this._interval = undefined;
@@ -87,7 +86,7 @@ window.DataCache.prototype.stopExpireInterval = function() {
 
 
 
-window.DataCache.prototype.runExpire = function() {
+DataCache.prototype.runExpire = function() {
   var d = new Date();
   var t = d.getTime()-this.REQUEST_CACHE_MAX_AGE*1000;
 
@@ -107,7 +106,9 @@ window.DataCache.prototype.runExpire = function() {
 }
 
 
-window.DataCache.prototype.debug = function() {
+DataCache.prototype.debug = function() {
 //NOTE: ECMAScript strings use 16 bit chars (it's in the standard), so convert for bytes/Kb
   return 'Cache: '+Object.keys(this._cache).length+' items, '+(this._cacheCharSize*2).toLocaleString()+' bytes ('+Math.ceil(this._cacheCharSize/512).toLocaleString()+'K)';
 }
+
+IITC.DataCache = DataCache;
