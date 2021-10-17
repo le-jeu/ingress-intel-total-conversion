@@ -41,7 +41,7 @@ artifact.requestData = function() {
   if (isIdle()) {
     artifact.idle = true;
   } else {
-    window.postAjax('getArtifactPortals', {}, artifact.handleSuccess, artifact.handleError);
+    IITC.postAjax('getArtifactPortals', {}, artifact.handleSuccess, artifact.handleError);
   }
 }
 

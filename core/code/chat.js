@@ -159,7 +159,7 @@ chat.requestFaction = function(getOlderMsgs, isRetry) {
   $("#chatcontrols a:contains('faction')").addClass('loading');
 
   var d = chat.genPostData('faction', chat._faction, getOlderMsgs);
-  var r = window.postAjax(
+  var r = IITC.postAjax(
     'getPlexts',
     d,
     function(data, textStatus, jqXHR) { chat.handleFaction(data, getOlderMsgs, d.ascendingTimestampOrder); },
@@ -213,7 +213,7 @@ chat.requestPublic = function(getOlderMsgs, isRetry) {
   $("#chatcontrols a:contains('all')").addClass('loading');
 
   var d = chat.genPostData('all', chat._public, getOlderMsgs);
-  var r = window.postAjax(
+  var r = IITC.postAjax(
     'getPlexts',
     d,
     function(data, textStatus, jqXHR) { chat.handlePublic(data, getOlderMsgs, d.ascendingTimestampOrder); },
@@ -267,7 +267,7 @@ chat.requestAlerts = function(getOlderMsgs, isRetry) {
   $("#chatcontrols a:contains('alerts')").addClass('loading');
 
   var d = chat.genPostData('alerts', chat._alerts, getOlderMsgs);
-  var r = window.postAjax(
+  var r = IITC.postAjax(
     'getPlexts',
     d,
     function(data, textStatus, jqXHR) { chat.handleAlerts(data, getOlderMsgs, d.ascendingTimestampOrder); },
@@ -839,7 +839,7 @@ chat.postMsg = function() {
   var errMsg = 'Your message could not be delivered. You can copy&' +
                'paste it here and try again if you want:\n\n' + msg;
 
-  window.postAjax('sendPlext', data,
+  IITC.postAjax('sendPlext', data,
     function(response) {
       if(response.error) alert(errMsg);
       startRefreshTimeout(0.1*1000); //only chat uses the refresh timer stuff, so a perfect way of forcing an early refresh after a send message

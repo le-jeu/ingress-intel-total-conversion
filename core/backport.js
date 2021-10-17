@@ -17,6 +17,7 @@ simpleMap([
   'chat',
   'artifact',
   'requests',
+  'postAjax',
 ], window, IITC);
 
 

@@ -171,7 +171,7 @@ window.RegionScoreboardSetup = (function() {
       });
     }
 
-    window.postAjax('getRegionScoreDetails', {latE6:latE6, lngE6:lngE6},
+    IITC.postAjax('getRegionScoreDetails', {latE6:latE6, lngE6:lngE6},
       onRequestSuccess,
       onRequestFailure);
   }

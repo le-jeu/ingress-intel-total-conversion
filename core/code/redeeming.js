@@ -171,7 +171,7 @@ window.setupRedeem = function() {
     passcode = passcode.replace(/[^\x20-\x7E]+/g, ''); //removes non-printable characters
     if(!passcode) return;
 
-    var jqXHR = window.postAjax('redeemReward', {passcode:passcode}, window.handleRedeemResponse, function(response) {
+    var jqXHR = IITC.postAjax('redeemReward', {passcode:passcode}, window.handleRedeemResponse, function(response) {
       var extra = '';
       if(response.status) {
         extra = (window.REDEEM_STATUSES[response.status] || 'The server indicated an error.') + ' (HTTP ' + response.status + ')';

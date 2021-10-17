@@ -62,7 +62,7 @@ var handleResponse = function(deferred, guid, data, success) {
 }
 
 var doRequest = function(deferred, guid) {
-  window.postAjax('getPortalDetails', {guid:guid},
+  IITC.postAjax('getPortalDetails', {guid:guid},
     function(data,textStatus,jqXHR) { handleResponse(deferred, guid, data, true); },
     function() { handleResponse(deferred, guid, undefined, false); }
   );

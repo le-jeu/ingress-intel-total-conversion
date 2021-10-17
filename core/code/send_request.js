@@ -1,3 +1,5 @@
+var latestFailedRequestTime;
+var blockOutOfDateRequests;
 
 // posts AJAX request to Ingress API.
 // action: last part of the actual URL, the rpc/dashboard. is
@@ -8,23 +10,23 @@
 // success: method to call on success. See jQuery API docs for avail-
 //          able arguments: http://api.jquery.com/jQuery.ajax/
 // error: see above. Additionally it is logged if the request failed.
-window.postAjax = function(action, data, successCallback, errorCallback) {
+IITC.postAjax = function(action, data, successCallback, errorCallback) {
   // state management functions... perhaps should be outside of this func?
 
 //  var remove = function(data, textStatus, jqXHR) { IITC.requests.remove(jqXHR); };
 //  var errCnt = function(jqXHR) { IITC.failedRequestCount++; IITC.requests.remove(jqXHR); };
 
-  if (window.latestFailedRequestTime && window.latestFailedRequestTime < Date.now()-120*1000) {
+  if (latestFailedRequestTime && latestFailedRequestTime < Date.now()-120*1000) {
     // no errors in the last two minutes - clear the error count
     IITC.failedRequestCount = 0;
-    window.latestFailedRequestTime = undefined;
+    latestFailedRequestTime = undefined;
   }
 
   var onError = function(jqXHR, textStatus, errorThrown) {
     IITC.requests.remove(jqXHR);
     IITC.failedRequestCount++;
 
-    window.latestFailedRequestTime = Date.now();
+    latestFailedRequestTime = Date.now();
 
     // pass through to the user error func, if one exists
     if (errorCallback) {
@@ -43,22 +45,22 @@ window.postAjax = function(action, data, successCallback, errorCallback) {
         errorCallback(jqXHR, textStatus, "data.error == 'out of date'");
       }
 
-      window.outOfDateUserPrompt();
+      IITC.outOfDateUserPrompt();
     } else {
       successCallback(data, textStatus, jqXHR);
     }
   };
 
   // we set this flag when we want to block all requests due to having an out of date CURRENT_VERSION
-  if (window.blockOutOfDateRequests) {
+  if (blockOutOfDateRequests) {
     IITC.failedRequestCount++;
-    window.latestFailedRequestTime = Date.now();
+    latestFailedRequestTime = Date.now();
 
     // call the error callback, if one exists
     if (errorCallback) {
       // NOTE: error called on a setTimeout - as it won't be expected to be synchronous
       // ensures no recursion issues if the error handler immediately resends the request
-      setTimeout(function(){errorCallback(null, undefined, "window.blockOutOfDateRequests is set");}, 10);
+      setTimeout(function(){errorCallback(null, undefined, "blockOutOfDateRequests is set");}, 10);
     }
     return;
   }
@@ -87,11 +89,11 @@ window.postAjax = function(action, data, successCallback, errorCallback) {
 }
 
 
-window.outOfDateUserPrompt = function()
+IITC.outOfDateUserPrompt = function()
 {
   // we block all requests while the dialog is open.
-  if (!window.blockOutOfDateRequests) {
-    window.blockOutOfDateRequests = true;
+  if (!blockOutOfDateRequests) {
+    blockOutOfDateRequests = true;
 
     dialog({
       title: 'Reload IITC',
@@ -109,12 +111,8 @@ window.outOfDateUserPrompt = function()
         }
       },
       close: function(event, ui) {
-        delete window.blockOutOfDateRequests;
+        blockOutOfDateRequests = false;
       }
-
     });
-
-
   }
-
 }
