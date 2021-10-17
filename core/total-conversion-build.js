@@ -5,13 +5,16 @@
 // @run-at         document-end
 
 
-window.script_info = plugin_info;
+var IITC = {};
+window.IITC = IITC;
+
+IITC.script_info = plugin_info;
 
 // REPLACE ORIG SITE ///////////////////////////////////////////////////
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '@build_date@';
+IITC.iitcBuildDate = '@build_date@';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -194,5 +197,7 @@ var ulog = (function (module) {
 }({})).exports;
 
 '@bundle_code@';
+
+'@include_raw:backport.js@';
 
 /* exported ulog, portalsFactionLayers, linksFactionLayers, fieldsFactionLayers -- eslint */
