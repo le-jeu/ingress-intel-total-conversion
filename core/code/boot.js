@@ -210,7 +210,7 @@ function boot () {
   window.setupTooltips();
   IITC.chat.setup();
   window.updateGameScore();
-  window.search.setup();
+  IITC.search.setup();
   window.portalDetail.setup();
   window.setupRedeem();
   window.setupSidebar();

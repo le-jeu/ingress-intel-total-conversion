@@ -20,6 +20,7 @@ simpleMap([
   'DataCache',
   'MapDataRequest',
   'mapDataRequest',
+  'search',
 ], window, IITC);
 
 // api

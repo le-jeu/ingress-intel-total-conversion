@@ -25,16 +25,17 @@ IITC.addHook('search', function(query) {});
   selected or the search was cancelled by the user).
 */
 
-window.search = {
+IITC.search = {
   lastSearch: null,
 };
+var search = IITC.search;
 
-window.search.Query = function(term, confirmed) {
+search.Query = function(term, confirmed) {
   this.term = term;
   this.confirmed = confirmed;
   this.init();
 };
-window.search.Query.prototype.init = function() {
+search.Query.prototype.init = function() {
   this.results = [];
 
   this.container = $('<div>').addClass('searchquery');
@@ -59,15 +60,15 @@ window.search.Query.prototype.init = function() {
 
   IITC.runHooks('search', this);
 };
-window.search.Query.prototype.show = function() {
+search.Query.prototype.show = function() {
   this.container.appendTo('#searchwrapper');
 };
-window.search.Query.prototype.hide = function() {
+search.Query.prototype.hide = function() {
   this.container.remove();
   this.removeSelectedResult();
   this.removeHoverResult();
 };
-window.search.Query.prototype.addResult = function(result) {
+search.Query.prototype.addResult = function(result) {
   if(this.results.length == 0) {
     // remove 'No results'
     this.list.empty();
@@ -116,10 +117,10 @@ window.search.Query.prototype.addResult = function(result) {
       .append($('<em>')
         .append(result.description));
   }
-  
+
 };
 
-window.search.Query.prototype.resultLayer = function(result) {
+search.Query.prototype.resultLayer = function(result) {
   if(result.layer !== null && !result.layer) {
     result.layer = L.layerGroup();
 
@@ -142,7 +143,7 @@ window.search.Query.prototype.resultLayer = function(result) {
 return result.layer;
 
 };
-window.search.Query.prototype.onResultSelected = function(result, ev) {
+search.Query.prototype.onResultSelected = function(result, ev) {
   this.removeHoverResult();
   this.removeSelectedResult();
   this.selectedResult = result;
@@ -173,14 +174,14 @@ window.search.Query.prototype.onResultSelected = function(result, ev) {
   if(window.isSmartphone()) window.show('map');
 }
 
-window.search.Query.prototype.removeSelectedResult = function() {
+search.Query.prototype.removeSelectedResult = function() {
   if(this.selectedResult) {
     if(this.selectedResult.layer) map.removeLayer(this.selectedResult.layer);
     if(this.selectedResult.onRemove) this.selectedResult.onRemove(this.selectedResult);
   }
 }
 
-window.search.Query.prototype.onResultHoverStart = function(result, ev) {
+search.Query.prototype.onResultHoverStart = function(result, ev) {
   this.removeHoverResult();
   this.hoverResult = result;
 
@@ -191,7 +192,7 @@ window.search.Query.prototype.onResultHoverStart = function(result, ev) {
   if(result.layer) map.addLayer(result.layer);
 };
 
-window.search.Query.prototype.removeHoverResult = function() {
+search.Query.prototype.removeHoverResult = function() {
   if(this.hoverResult !== this.selectedResult) {
     if(this.hoverResult) {
       if(this.hoverResult.layer) { map.removeLayer(this.hoverResult.layer); }
@@ -200,30 +201,30 @@ window.search.Query.prototype.removeHoverResult = function() {
   this.hoverResult = null;
 };
 
-window.search.Query.prototype.onResultHoverEnd = function(result, ev) {
+search.Query.prototype.onResultHoverEnd = function(result, ev) {
   this.removeHoverResult();
 };
 
-window.search.doSearch = function(term, confirmed) {
+search.doSearch = function(term, confirmed) {
   term = term.trim();
 
   // minimum 3 characters for automatic search
   if(term.length < 3 && !confirmed) return;
 
   // don't clear last confirmed search
-  if(window.search.lastSearch
-  && window.search.lastSearch.confirmed
+  if(search.lastSearch
+  && search.lastSearch.confirmed
   && !confirmed)
     return;
 
   // don't make the same query again
-  if(window.search.lastSearch
-  && window.search.lastSearch.confirmed == confirmed
-  && window.search.lastSearch.term == term)
+  if(search.lastSearch
+  && search.lastSearch.confirmed == confirmed
+  && search.lastSearch.term == term)
     return;
 
-  if(window.search.lastSearch) window.search.lastSearch.hide();
-  window.search.lastSearch = null;
+  if(search.lastSearch) search.lastSearch.hide();
+  search.lastSearch = null;
 
   // clear results
   if(term == '') return;
@@ -232,11 +233,11 @@ window.search.doSearch = function(term, confirmed) {
 
   $('.ui-tooltip').remove();
 
-  window.search.lastSearch = new window.search.Query(term, confirmed);
-  window.search.lastSearch.show();
+  search.lastSearch = new search.Query(term, confirmed);
+  search.lastSearch.show();
 };
 
-window.search.setup = function() {
+search.setup = function() {
   $('#search')
     .keypress(function(e) {
       if((e.keyCode ? e.keyCode : e.which) != 13) return;
@@ -244,14 +245,14 @@ window.search.setup = function() {
 
       var term = $(this).val();
 
-      clearTimeout(window.search.timer);
-      window.search.doSearch(term, true);
+      clearTimeout(search.timer);
+      search.doSearch(term, true);
     })
     .on('keyup keypress change paste', function(e) {
-      clearTimeout(window.search.timer);
-      window.search.timer = setTimeout(function() {
+      clearTimeout(search.timer);
+      search.timer = setTimeout(function() {
         var term = $(this).val();
-        window.search.doSearch(term, false);
+        search.doSearch(term, false);
       }.bind(this), 500);
     });
   $('#buttongeolocation').click(function(){
@@ -357,7 +358,7 @@ IITC.addHook('search', function(query) {
     data.forEach(function(item) {
       if(resultMap[item.place_id]) { return; } // duplicate
       resultMap[item.place_id] = true;
-      
+
       var result = {
         title: item.display_name,
         description: 'Type: ' + item.type,
@@ -391,11 +392,11 @@ IITC.addHook('search', function(query) {
       query.addResult(result);
     });
   }
-  
+
   // Bounded search allows amenity-only searches (e.g. "amenity=toilet") via special phrases
   // http://wiki.openstreetmap.org/wiki/Nominatim/Special_Phrases/EN
   var bounded = '&bounded=1';
-  
+
   $.getJSON(NOMINATIM + encodeURIComponent(query.term) + viewbox + bounded, onQueryResult.bind(null, true));
 });
 
