@@ -237,7 +237,7 @@ window.ornaments = {
              + '<div id="ornamentsList"> ' + window.ornaments.ornamentsList() + '</div>'
              + '</div>';
 
-    dialog({
+    IITC.dialog({
       html:html,
       id:'ornamentsOpt',
       title:'Ornament excludes',

@@ -132,7 +132,7 @@ window.showPortalPosLinks = function(lat, lng, name) {
   var bingmaps = '<a href="https://www.bing.com/maps/?v=2&cp='+lat+'~'+lng+'&lvl=16&sp=Point.'+lat+'_'+lng+'_'+encoded_name+'___">Bing Maps</a>';
   var osm = '<a href="https://www.openstreetmap.org/?mlat='+lat+'&mlon='+lng+'&zoom=16">OpenStreetMap</a>';
   var latLng = '<span>' + lat + ',' + lng +'</span>';
-  dialog({
+  IITC.dialog({
     html: '<div style="text-align: center;">' + qrcode + script + gmaps + '; ' + bingmaps + '; ' + osm + '<br />' + latLng + '</div>',
     title: name,
     id: 'poslinks'

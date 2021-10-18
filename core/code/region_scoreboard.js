@@ -162,7 +162,7 @@ window.RegionScoreboardSetup = (function() {
       var style = 'position: absolute; top: 0; width: 100%; max-width: 412px';
       mainDialog = $('<div>',{style: style}).html(text).appendTo(document.body);
     } else {
-      mainDialog = dialog({
+      mainDialog = IITC.dialog({
         title: 'Region scores',
         html: text,
         width: 450,

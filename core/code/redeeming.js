@@ -29,7 +29,7 @@ window.handleRedeemResponse = function(data, textStatus, jqXHR) {
 
   if(data.error) {
     log.error('Error redeeming passcode "'+passcode+'": ' + data.error)
-    dialog({
+    IITC.dialog({
       title: 'Error: ' + passcode,
       html: '<strong>' + data.error + '</strong>'
     });
@@ -37,7 +37,7 @@ window.handleRedeemResponse = function(data, textStatus, jqXHR) {
   }
   if(!data.rewards) {
     log.error('Error redeeming passcode "'+passcode+'": ', data)
-    dialog({
+    IITC.dialog({
       title: 'Error: ' + passcode,
       html: '<strong>An unexpected error occured</strong>'
     });
@@ -75,7 +75,7 @@ window.handleRedeemResponse = function(data, textStatus, jqXHR) {
   });
 
   // Display it
-  dialog({
+  IITC.dialog({
     title: 'Passcode: ' + passcode,
     html: html,
     buttons: buttons
@@ -178,7 +178,7 @@ window.setupRedeem = function() {
       } else {
         extra = 'No status code was returned.';
       }
-      dialog({
+      IITC.dialog({
         title: 'Request failed: ' + passcode,
         html: '<strong>The HTTP request failed.</strong> ' + extra
       });

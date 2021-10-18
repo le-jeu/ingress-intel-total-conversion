@@ -201,7 +201,7 @@ function boot () {
   setupIngressMarkers();
   window.extractFromStock();
   window.setupIdle();
-  window.setupDialogs();
+  IITC.setupDialogs();
   window.setupDataTileParams();
   window.setupMap();
   window.setupOMS();

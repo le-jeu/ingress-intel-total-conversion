@@ -12,7 +12,7 @@ chat.commTabs = [
   {channel:'all', name:'All', inputPrompt: 'broadcast:', inputColor:'#f66'},
   {channel:'faction', name:'Aaction', inputPrompt: 'tell faction:'},
   {channel:'alerts', name:'Alerts', inputPrompt: 'tell Jarvis:', inputColor: '#666', globalBounds: true, sendMessage: function() {
-    alert("Jarvis: A strange game. The only winning move is not to play. How about a nice game of chess?\n(You can't chat to the 'alerts' channel!)");
+    IITC.alert("Jarvis: A strange game. The only winning move is not to play. How about a nice game of chess?\n(You can't chat to the 'alerts' channel!)");
   }},
 ];
 
@@ -810,7 +810,7 @@ chat.setupPosting = function() {
 chat.postMsg = function() {
   var c = chat.getActive();
   if(c == 'alerts')
-    return alert("Jarvis: A strange game. The only winning move is not to play. How about a nice game of chess?\n(You can't chat to the 'alerts' channel!)");
+    return IITC.alert("Jarvis: A strange game. The only winning move is not to play. How about a nice game of chess?\n(You can't chat to the 'alerts' channel!)");
 
   var msg = $.trim($('#chatinput input').val());
   if(!msg || msg === '') return;
@@ -841,11 +841,11 @@ chat.postMsg = function() {
 
   IITC.postAjax('sendPlext', data,
     function(response) {
-      if(response.error) alert(errMsg);
+      if(response.error) IITC.alert(errMsg);
       startRefreshTimeout(0.1*1000); //only chat uses the refresh timer stuff, so a perfect way of forcing an early refresh after a send message
     },
     function() {
-      alert(errMsg);
+      IITC.alert(errMsg);
     }
   );
 

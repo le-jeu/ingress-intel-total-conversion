@@ -304,7 +304,7 @@ artifact.showArtifactList = function() {
   // You can select a portal and the detailed data contains the list of shard numbers, but there's still no
   // more information on targets
 
-  dialog({
+  IITC.dialog({
     title: 'Artifacts',
     id: 'iitc-artifacts',
     html: html,

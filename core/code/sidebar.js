@@ -118,7 +118,7 @@ function setupLargeImagePreview  () {
     preview.src = img.src;
     preview.style = 'margin: auto; display: block';
     var title = e.delegateTarget.querySelector('.title').innerText;
-    dialog({
+    IITC.dialog({
       html: preview,
       title: title,
       id: 'iitc-portal-image',
@@ -226,7 +226,7 @@ function aboutIITC () {
     html += '<div><p>Plugins:</p><ul>' + plugins + '</ul></div>';
   }
 
-  dialog({
+  IITC.dialog({
     title: 'IITC ' + iitcVersion,
     id: 'iitc-about',
     html: html,

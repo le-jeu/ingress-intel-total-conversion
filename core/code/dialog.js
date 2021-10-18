@@ -5,24 +5,24 @@
 /* The global ID of onscreen dialogs.
  * Starts at 0.
  */
-window.DIALOG_ID = 0;
+IITC.DIALOG_ID = 0;
 
 /* All onscreen dialogs, keyed by their ID.
  */
-window.DIALOGS = {};
+IITC.DIALOGS = {};
 
 /* The number of dialogs on screen.
  */
-window.DIALOG_COUNT = 0;
+IITC.DIALOG_COUNT = 0;
 
 /* The dialog that has focus.
  */
-window.DIALOG_FOCUS = null;
+IITC.DIALOG_FOCUS = null;
 
 /* Controls how quickly the slide toggle animation
  * should play for dialog collapsing and expanding.
  */
-window.DIALOG_SLIDE_DURATION = 100;
+IITC.DIALOG_SLIDE_DURATION = 100;
 
 /* Creates a dialog and puts it onscreen. Takes one argument: options, a JS object.
  * == Common options
@@ -48,12 +48,12 @@ window.DIALOG_SLIDE_DURATION = 100;
  * applied a class to your dialog after creating it with alert(), dialogClass may be particularly
  * useful.
  */
-window.dialog = function(options) {
+IITC.dialog = function(options) {
   // Override for smartphones. Preserve default behavior and create a modal dialog.
   options = options || {};
 
   // Build an identifier for this dialog
-  var id = 'dialog-' + (options.modal ? 'modal' : (options.id ? options.id : 'anon-' + window.DIALOG_ID++));
+  var id = 'dialog-' + (options.modal ? 'modal' : (options.id ? options.id : 'anon-' + IITC.DIALOG_ID++));
   var jqID = '#' + id;
   var html = '';
 
@@ -63,7 +63,7 @@ window.dialog = function(options) {
   } else if(options.html) {
     html = options.html;
   } else {
-    log.error('window.dialog: warning: no text in dialog');
+    log.error('IITC.dialog: warning: no text in dialog');
     html = window.convertTextToTableMagic('');
   }
 
@@ -74,13 +74,13 @@ window.dialog = function(options) {
   }
 
   // Close out existing dialogs.
-  if(window.DIALOGS[id]) {
+  if(IITC.DIALOGS[id]) {
     try {
-      var selector = $(window.DIALOGS[id]);
+      var selector = $(IITC.DIALOGS[id]);
       selector.dialog('close');
       selector.remove();
     } catch (e) {
-      log.error('window.dialog: Tried to close nonexistent dialog ' + id);
+      log.error('IITC.dialog: Tried to close nonexistent dialog ' + id);
     }
   }
 
@@ -155,10 +155,10 @@ window.dialog = function(options) {
           // Slide toggle
           $(this).css('height', '');
           $(content).slideToggle({
-            duration: window.DIALOG_SLIDE_DURATION,
+            duration: IITC.DIALOG_SLIDE_DURATION,
             complete: function () {
               $(buttonpane).slideToggle({
-                duration: window.DIALOG_SLIDE_DURATION,
+                duration: IITC.DIALOG_SLIDE_DURATION,
                 complete: sizeFix
               });
             }
@@ -178,10 +178,10 @@ window.dialog = function(options) {
         close.addClass('ui-dialog-titlebar-button-close');
       }
 
-      window.DIALOGS[$(this).data('id')] = this;
-      window.DIALOG_COUNT++;
+      IITC.DIALOGS[$(this).data('id')] = this;
+      IITC.DIALOG_COUNT++;
 
-      log.log('window.dialog: ' + $(this).data('id') + ' (' + $(this).dialog('option', 'title') + ') opened. ' + window.DIALOG_COUNT + ' remain.');
+      log.log('IITC.dialog: ' + $(this).data('id') + ' (' + $(this).dialog('option', 'title') + ') opened. ' + IITC.DIALOG_COUNT + ' remain.');
     },
     close: function() {
       // Run the close callback if we have one
@@ -190,15 +190,15 @@ window.dialog = function(options) {
       }
 
       // Make sure that we don't keep a dead dialog in focus
-      if(window.DIALOG_FOCUS && $(window.DIALOG_FOCUS).data('id') === $(this).data('id')) {
-        window.DIALOG_FOCUS = null;
+      if(IITC.DIALOG_FOCUS && $(IITC.DIALOG_FOCUS).data('id') === $(this).data('id')) {
+        IITC.DIALOG_FOCUS = null;
       }
 
       // Finalize
-      delete window.DIALOGS[$(this).data('id')];
+      delete IITC.DIALOGS[$(this).data('id')];
 
-      window.DIALOG_COUNT--;
-      log.log('window.dialog: ' + $(this).data('id') + ' (' + $(this).dialog('option', 'title') + ') closed. ' + window.DIALOG_COUNT + ' remain.');
+      IITC.DIALOG_COUNT--;
+      log.log('window.dialog: ' + $(this).data('id') + ' (' + $(this).dialog('option', 'title') + ') closed. ' + IITC.DIALOG_COUNT + ' remain.');
 
       // remove from DOM and destroy
       $(this).dialog('destroy').remove();
@@ -209,18 +209,18 @@ window.dialog = function(options) {
       }
 
       // Blur the window currently in focus unless we're gaining focus
-      if(window.DIALOG_FOCUS && $(window.DIALOG_FOCUS).data('id') !== $(this).data('id')) {
+      if(IITC.DIALOG_FOCUS && $(IITC.DIALOG_FOCUS).data('id') !== $(this).data('id')) {
         $.proxy(function(event, ui) {
           if($(this).data('blurCallback')) {
             $.proxy($(this).data('blurCallback'), this)();
           }
 
           $(this).closest('.ui-dialog').find('.ui-dialog-title').removeClass('ui-dialog-title-active').addClass('ui-dialog-title-inactive');
-        }, window.DIALOG_FOCUS)();
+        }, IITC.DIALOG_FOCUS)();
       }
 
       // This dialog is now in focus
-      window.DIALOG_FOCUS = this;
+      IITC.DIALOG_FOCUS = this;
       $(this).closest('.ui-dialog').find('.ui-dialog-title').removeClass('ui-dialog-title-inactive').addClass('ui-dialog-title-active');
     }
   }, options));
@@ -255,9 +255,9 @@ window.dialog = function(options) {
 }
 
 /* Creates an alert dialog with default settings.
- * If you want more configurability, use window.dialog instead.
+ * If you want more configurability, use IITC.dialog instead.
  */
-window.alert = function(text, isHTML, closeCallback) {
+IITC.alert = function(text, isHTML, closeCallback) {
   var obj = {closeCallback: closeCallback};
   if(isHTML) {
     obj.html = text;
@@ -268,9 +268,9 @@ window.alert = function(text, isHTML, closeCallback) {
   return dialog(obj);
 }
 
-window.setupDialogs = function() {
-  window.DIALOG_ID = 0;
-  window.DIALOGS   = {}
-  window.DIALOG_COUNT = 0;
-  window.DIALOG_FOCUS = null;
+IITC.setupDialogs = function() {
+  IITC.DIALOG_ID = 0;
+  IITC.DIALOGS   = {}
+  IITC.DIALOG_COUNT = 0;
+  IITC.DIALOG_FOCUS = null;
 }

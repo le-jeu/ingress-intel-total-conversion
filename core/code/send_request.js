@@ -95,7 +95,7 @@ IITC.outOfDateUserPrompt = function()
   if (!blockOutOfDateRequests) {
     blockOutOfDateRequests = true;
 
-    dialog({
+    IITC.dialog({
       title: 'Reload IITC',
       html: '<p>IITC is using an outdated version code. This will happen when Niantic updates the standard intel site.</p>'
            +'<p>You need to reload the page to get the updated changes.</p>'

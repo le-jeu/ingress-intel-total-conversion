@@ -40,7 +40,7 @@ window.setupDataTileParams = function() {
     }
 
   } else {
-    dialog({
+    IITC.dialog({
       title: 'IITC Warning',
       html: "<p>IITC failed to detect the ZOOM_TO_LEVEL and/or TILES_PER_EDGE settings from the stock intel site.</p>"
            +"<p>IITC is now using fallback default values. However, if detection has failed it's likely the values have changed."

@@ -29,11 +29,19 @@ simpleMap([
   'runHooks',
   'addHook',
   'removeHook',
+  'dialog',
+  'alert',
+  'setupDialogs',
 ], window, IITC);
 
 // expose internals ?
 simpleMap([
   '_hooks',
+  'DIALOG_ID',
+  'DIALOGS',
+  'DIALOG_COUNT',
+  'DIALOG_FOCUS',
+  'DIALOG_SLIDE_DURATION',
 ], window, IITC);
 
 window.IITC = IITC = new Proxy(IITC, {
