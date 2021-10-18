@@ -107,7 +107,7 @@ window.smartphoneInfo = function(data) {
         var reso = ind < details.resonators.length ? details.resonators[ind] : null;
       }
 
-      var className = TEAM_TO_CSS[getTeam(details)];
+      var className = TEAM_TO_CSS[IITC.getTeam(details)];
       if(slot !== null && OCTANTS[slot] === 'N')
         className += ' north'
       if(reso) {

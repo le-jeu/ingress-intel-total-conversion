@@ -79,7 +79,7 @@ window.renderPortalDetails = function(guid) {
 
 
   // portal level. start with basic data - then extend with fractional info in tooltip if available
-  var levelInt = (teamStringToId(data.team) == TEAM_NONE) ? 0 : data.level;
+  var levelInt = (IITC.teamStringToId(data.team) == TEAM_NONE) ? 0 : data.level;
   var levelDetails = levelInt;
   if (details) {
     levelDetails = getPortalLevel(details);
@@ -97,7 +97,7 @@ window.renderPortalDetails = function(guid) {
 
   $('#portaldetails')
     .html('') //to ensure it's clear
-    .attr('class', TEAM_TO_CSS[teamStringToId(data.team)])
+    .attr('class', TEAM_TO_CSS[IITC.teamStringToId(data.team)])
     .append(
       $('<h3>', { class:'title' })
         .text(title)

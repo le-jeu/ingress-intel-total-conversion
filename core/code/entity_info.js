@@ -7,11 +7,11 @@
 
 // given the entity detail data, returns the team the entity belongs
 // to. Uses TEAM_* enum values.
-window.getTeam = function(details) {
+IITC.getTeam = function(details) {
   return teamStringToId(details.team);
 }
 
-window.teamStringToId = function(teamStr) {
+IITC.teamStringToId = function(teamStr) {
   var team = TEAM_NONE;
   if(teamStr === 'ENLIGHTENED') team = TEAM_ENL;
   if(teamStr === 'RESISTANCE') team = TEAM_RES;

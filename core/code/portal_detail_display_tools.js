@@ -202,7 +202,7 @@ window.getAttackApGainText = function(d,fieldCount,linkCount) {
   var totalGain = breakdown.enemyAp;
 
   var t = '';
-  if (teamStringToId(PLAYER.team) == teamStringToId(d.team)) {
+  if (IITC.teamStringToId(PLAYER.team) == IITC.teamStringToId(d.team)) {
     totalGain = breakdown.friendlyAp;
     t += 'Friendly AP:\t' + breakdown.friendlyAp + '\n';
     t += '  Deploy ' + breakdown.deployCount + ', ';

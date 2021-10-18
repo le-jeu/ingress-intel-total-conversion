@@ -317,7 +317,7 @@ window.Render.prototype.createPortalEntity = function(ent, details) { // details
   }
 
   var portalLevel = parseInt(data.level)||0;
-  var team = teamStringToId(data.team);
+  var team = IITC.teamStringToId(data.team);
   // the data returns unclaimed portals as level 1 - but IITC wants them treated as level 0
   if (team == TEAM_NONE) portalLevel = 0;
 
@@ -418,7 +418,7 @@ window.Render.prototype.createFieldEntity = function(ent) {
     this.deleteFieldEntity(ent[0]); // option 2, for now
   }
 
-  var team = teamStringToId(ent[2][1]);
+  var team = IITC.teamStringToId(ent[2][1]);
   var latlngs = [
     L.latLng(data.points[0].latE6/1E6, data.points[0].lngE6/1E6),
     L.latLng(data.points[1].latE6/1E6, data.points[1].lngE6/1E6),
@@ -486,7 +486,7 @@ window.Render.prototype.createLinkEntity = function(ent,faked) {
     this.deleteLinkEntity(ent[0]); // option 2 - for now
   }
 
-  var team = teamStringToId(ent[2][1]);
+  var team = IITC.teamStringToId(ent[2][1]);
   var latlngs = [
     L.latLng(data.oLatE6/1E6, data.oLngE6/1E6),
     L.latLng(data.dLatE6/1E6, data.dLngE6/1E6)
