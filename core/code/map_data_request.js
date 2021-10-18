@@ -3,8 +3,7 @@
 // and then pass it on to the render class for display purposes
 // Uses the map data cache class to reduce network requests
 
-
-window.MapDataRequest = function() {
+var MapDataRequest = function() {
   this.cache = new IITC.DataCache();
   this.render = new Render();
   this.debugTiles = new RenderDebugTiles();
@@ -79,9 +78,10 @@ window.MapDataRequest = function() {
   });
 
 }
+IITC.MapDataRequest = MapDataRequest;
 
 
-window.MapDataRequest.prototype.start = function() {
+MapDataRequest.prototype.start = function() {
   var savedContext = this;
 
   // setup idle resume function
@@ -100,7 +100,7 @@ window.MapDataRequest.prototype.start = function() {
 }
 
 
-window.MapDataRequest.prototype.mapMoveStart = function() {
+MapDataRequest.prototype.mapMoveStart = function() {
   log.log('refresh map movestart');
 
   this.setStatus('paused');
@@ -108,7 +108,7 @@ window.MapDataRequest.prototype.mapMoveStart = function() {
   this.pauseRenderQueue(true);
 }
 
-window.MapDataRequest.prototype.mapMoveEnd = function() {
+MapDataRequest.prototype.mapMoveEnd = function() {
   var bounds = clampLatLngBounds(map.getBounds());
   var zoom = map.getZoom();
 
@@ -133,7 +133,7 @@ window.MapDataRequest.prototype.mapMoveEnd = function() {
   this.refreshOnTimeout(this.MOVE_REFRESH);
 }
 
-window.MapDataRequest.prototype.idleResume = function() {
+MapDataRequest.prototype.idleResume = function() {
   // if we have no timer set and there are no active requests, refresh has gone idle and the timer needs restarting
 
   if (this.idle) {
@@ -145,7 +145,7 @@ window.MapDataRequest.prototype.idleResume = function() {
 }
 
 
-window.MapDataRequest.prototype.clearTimeout = function() {
+MapDataRequest.prototype.clearTimeout = function() {
 
   if (this.timer) {
     log.log('cancelling existing map refresh timer');
@@ -154,7 +154,7 @@ window.MapDataRequest.prototype.clearTimeout = function() {
   }
 }
 
-window.MapDataRequest.prototype.refreshOnTimeout = function(seconds) {
+MapDataRequest.prototype.refreshOnTimeout = function(seconds) {
   this.clearTimeout();
 
   log.log('starting map refresh in '+seconds+' seconds');
@@ -169,18 +169,18 @@ window.MapDataRequest.prototype.refreshOnTimeout = function(seconds) {
 }
 
 
-window.MapDataRequest.prototype.setStatus = function(short,long,progress) {
+MapDataRequest.prototype.setStatus = function(short,long,progress) {
   this.status = { short: short, long: long, progress: progress };
   window.renderUpdateStatus();
 }
 
 
-window.MapDataRequest.prototype.getStatus = function() {
+MapDataRequest.prototype.getStatus = function() {
   return this.status;
 };
 
 
-window.MapDataRequest.prototype.refresh = function() {
+MapDataRequest.prototype.refresh = function() {
 
   // if we're idle, don't refresh
   if (window.isIdle()) {
@@ -279,7 +279,7 @@ window.MapDataRequest.prototype.refresh = function() {
 //TODO: with recent backend changes there are now multiple zoom levels of data that is identical except perhaps for some
 // reduction of detail when zoomed out. to take good advantage of the cache, a check for cached data at a closer zoom
 // but otherwise the same parameters (min portal level, tiles per edge) will mean less downloads when zooming out
-// (however, the default code in getDataZoomForMapZoom currently reduces the need for this, as it forces the furthest 
+// (however, the default code in getDataZoomForMapZoom currently reduces the need for this, as it forces the furthest
 //  out zoom tiles for a detail level)
       if (this.cache && this.cache.isFresh(tile_id) ) {
         // data is fresh in the cache - just render it
@@ -338,7 +338,7 @@ window.MapDataRequest.prototype.refresh = function() {
 }
 
 
-window.MapDataRequest.prototype.delayProcessRequestQueue = function(seconds,isFirst) {
+MapDataRequest.prototype.delayProcessRequestQueue = function(seconds,isFirst) {
   if (this.timer === undefined) {
     var _this = this;
     this.timer = setTimeout ( function() {
@@ -348,7 +348,7 @@ window.MapDataRequest.prototype.delayProcessRequestQueue = function(seconds,isFi
 }
 
 
-window.MapDataRequest.prototype.processRequestQueue = function(isFirstPass) {
+MapDataRequest.prototype.processRequestQueue = function(isFirstPass) {
 
   // if nothing left in the queue, finish
   if (Object.keys(this.queuedTiles).length == 0) {
@@ -415,7 +415,7 @@ window.MapDataRequest.prototype.processRequestQueue = function(isFirstPass) {
 }
 
 
-window.MapDataRequest.prototype.sendTileRequest = function(tiles) {
+MapDataRequest.prototype.sendTileRequest = function(tiles) {
 
   var tilesList = [];
 
@@ -446,7 +446,7 @@ window.MapDataRequest.prototype.sendTileRequest = function(tiles) {
   );
 }
 
-window.MapDataRequest.prototype.requeueTile = function(id, error) {
+MapDataRequest.prototype.requeueTile = function(id, error) {
   if (id in this.queuedTiles) {
     // tile is currently wanted...
 
@@ -490,7 +490,7 @@ window.MapDataRequest.prototype.requeueTile = function(id, error) {
 }
 
 
-window.MapDataRequest.prototype.handleResponse = function (data, tiles, success) {
+MapDataRequest.prototype.handleResponse = function (data, tiles, success) {
 
   this.activeRequestCount -= 1;
 
@@ -634,18 +634,18 @@ window.MapDataRequest.prototype.handleResponse = function (data, tiles, success)
 }
 
 
-window.MapDataRequest.prototype.resetRenderQueue = function() {
+MapDataRequest.prototype.resetRenderQueue = function() {
   this.renderQueue = [];
 
   if (this.renderQueueTimer) {
     clearTimeout(this.renderQueueTimer);
     this.renderQueueTimer = undefined;
   }
-  this.renderQueuePaused = false;  
+  this.renderQueuePaused = false;
 }
 
 
-window.MapDataRequest.prototype.pushRenderQueue = function (id, data, status) {
+MapDataRequest.prototype.pushRenderQueue = function (id, data, status) {
   this.debugTiles.setState(id,'render-queue');
   this.renderQueue.push({
     id:id,
@@ -659,7 +659,7 @@ window.MapDataRequest.prototype.pushRenderQueue = function (id, data, status) {
   }
 }
 
-window.MapDataRequest.prototype.startQueueTimer = function(delay) {
+MapDataRequest.prototype.startQueueTimer = function(delay) {
   if (this.renderQueueTimer === undefined) {
     var _this = this;
     this.renderQueueTimer = setTimeout( function() {
@@ -668,7 +668,7 @@ window.MapDataRequest.prototype.startQueueTimer = function(delay) {
   }
 }
 
-window.MapDataRequest.prototype.pauseRenderQueue = function(pause) {
+MapDataRequest.prototype.pauseRenderQueue = function(pause) {
   this.renderQueuePaused = pause;
   if (pause) {
     if (this.renderQueueTimer) {
@@ -682,7 +682,7 @@ window.MapDataRequest.prototype.pauseRenderQueue = function(pause) {
   }
 }
 
-window.MapDataRequest.prototype.processRenderQueue = function() {
+MapDataRequest.prototype.processRenderQueue = function() {
   var drawEntityLimit = this.RENDER_BATCH_SIZE;
 
 

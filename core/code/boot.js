@@ -134,7 +134,7 @@ function prepPluginsToLoad () {
     return prio;
   }
 
-  if (!script_info.script) {
+  if (!IITC.script_info.script) {
     log.warn('GM_info is not provided (improper userscript manager?)'); // IITC-Mobile for iOS
   }
 

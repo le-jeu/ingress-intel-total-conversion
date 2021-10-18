@@ -269,8 +269,8 @@ window.setupMap = function () {
   });
 
   // create the map data requester
-  window.mapDataRequest = new window.MapDataRequest();
-  window.mapDataRequest.start();
+  IITC.mapDataRequest = new IITC.MapDataRequest();
+  IITC.mapDataRequest.start();
 
   // start the refresh process with a small timeout, so the first data request happens quickly
   // (the code originally called the request function directly, and triggered a normal delay for the next refresh.

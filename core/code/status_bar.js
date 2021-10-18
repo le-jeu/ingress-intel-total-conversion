@@ -30,8 +30,8 @@ window.renderUpdateStatus = function() {
   // map status display
   t += ' <span class="map"><b>map</b>: ';
 
-  if (window.mapDataRequest) {
-    var status = window.mapDataRequest.getStatus();
+  if (IITC.mapDataRequest) {
+    var status = IITC.mapDataRequest.getStatus();
 
     // status.short - short description of status
     // status.long - longer description, for tooltip (optional)
