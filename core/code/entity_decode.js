@@ -3,8 +3,8 @@
 // stock intel site does internally too (the array format is only on the network)
 
 
-window.decodeArray = function(){};
-
+IITC.decodeArray = function(){};
+var decodeArray = IITC.decodeArray;
 
 function parseMod(arr) {
   if (!arr) { return null; }
@@ -118,7 +118,7 @@ function extendedPortalData(a) {
 }
 
 
-window.decodeArray.dataLen = {
+decodeArray.dataLen = {
   core: [CORE_PORTAL_DATA_LENGTH],
   summary: [SUMMARY_PORTAL_DATA_LENGTH],
   detailed: [EXTENDED_PORTAL_DATA_LENGTH, DETAILED_PORTAL_DATA_LENGTH],
@@ -126,7 +126,7 @@ window.decodeArray.dataLen = {
   anyknown: [CORE_PORTAL_DATA_LENGTH, SUMMARY_PORTAL_DATA_LENGTH, DETAILED_PORTAL_DATA_LENGTH, EXTENDED_PORTAL_DATA_LENGTH]
 };
 
-window.decodeArray.portal = function(a, details) {
+decodeArray.portal = function(a, details) {
   if (!a) {
     log.warn('Argument not specified');
     return;
@@ -168,10 +168,10 @@ window.decodeArray.portal = function(a, details) {
   return data;
 };
 
-window.decodeArray.portalSummary = function(a) { // deprecated!!
-  return window.decodeArray.portal(a, 'summary');
+decodeArray.portalSummary = function(a) { // deprecated!!
+  return decodeArray.portal(a, 'summary');
 };
 
-window.decodeArray.portalDetail = function(a) { // deprecated!!
-  return window.decodeArray.portal(a, 'detailed');
+decodeArray.portalDetail = function(a) { // deprecated!!
+  return decodeArray.portal(a, 'detailed');
 };

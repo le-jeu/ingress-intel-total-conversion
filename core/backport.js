@@ -21,6 +21,7 @@ simpleMap([
   'MapDataRequest',
   'mapDataRequest',
   'search',
+  'decodeArray',
 ], window, IITC);
 
 // api

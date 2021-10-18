@@ -288,7 +288,7 @@ window.Render.prototype.createPortalEntity = function(ent, details) { // details
 
   var previousData = undefined;
 
-  var data = decodeArray.portal(ent[2], details);
+  var data = IITC.decodeArray.portal(ent[2], details);
 
   // check if entity already exists
   if (ent[0] in window.portals) {
